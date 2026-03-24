@@ -1,1 +1,3 @@
-click the first one it auto updates, click the second one then it's the raw one
+auto-updates means you can update to the latest version immediately as it arruves
+ute3mainupd is manual update
+list[version] is a specific version
