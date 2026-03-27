@@ -1,0 +1,269 @@
+pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/raavenkkj/anti-kick/main/anti-kick.lua"))()
+    getgenv().AntiKick = true
+    getgenv().Notifications = true
+end)
+
+local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local LP = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- Cleanup
+if game:GetService("CoreGui"):FindFirstChild("SERAPHIC_TROLL_4_FINAL") then
+    game:GetService("CoreGui").SERAPHIC_TROLL_4_FINAL:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+ScreenGui.Name = "SERAPHIC_TROLL_4_FINAL"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+
+-- global state --
+local _G = {
+    r = 200, g = 200, b = 200,
+    flySpeed = 50, flying = false, infJump = false, noclip = false, predator = false,
+    esp = false, sawnick = false, ghoul = false, tank = false, jetpack = false,
+    target = "s", tileSize = 85,
+    States = {}, CommandRegistry = {}
+}
+
+local function GetTargets()
+    local text = _G.target:lower()
+    local victims = {}
+    if text == "all" then return Players:GetPlayers()
+    elseif text == "others" then 
+        for _, p in pairs(Players:GetPlayers()) do if p ~= LP then table.insert(victims, p) end end
+    elseif text == "s" or text == "me" then return {LP}
+    else
+        for _, p in pairs(Players:GetPlayers()) do
+            if p.Name:lower():find(text) or p.DisplayName:lower():find(text) then 
+                table.insert(victims, p) 
+            end
+        end
+    end
+    return victims
+end
+
+-- MAIN UI STRUCTURE --
+local Main = Instance.new("Frame", ScreenGui)
+Main.Size = UDim2.new(1, 0, 1, 0)
+Main.BackgroundTransparency = 1
+Main.Visible = false
+
+local Dimmer = Instance.new("Frame", Main)
+Dimmer.Size = UDim2.new(1, 0, 1, 0)
+Dimmer.BackgroundColor3 = Color3.new(0, 0, 0)
+Dimmer.BackgroundTransparency = 0.8
+
+-- [[ BRANDING & GREETING ]] --
+local Greeting = Instance.new("TextLabel", Main)
+Greeting.Size = UDim2.new(0.3, 0, 0, 40)
+Greeting.Position = UDim2.new(0.35, 0, 0.01, 0)
+Greeting.BackgroundTransparency = 1
+Greeting.Text = "Hello, user!"
+Greeting.TextColor3 = Color3.new(1, 1, 1)
+Greeting.Font = "Code"
+Greeting.TextSize = 16
+
+local MainTitle = Instance.new("TextLabel", Main)
+MainTitle.Size = UDim2.new(1, 0, 0, 50)
+MainTitle.Position = UDim2.new(0, 0, 0.05, 0)
+MainTitle.BackgroundTransparency = 1
+MainTitle.Text = "-- ULTIMATE TROLL EM 4.0 --"
+MainTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+MainTitle.Font = "Code"
+MainTitle.TextSize = 24
+MainTitle.TextStrokeTransparency = 0.5
+
+-- [[ TOP CENTER: COMMAND TILES ]] --
+local TopContainer = Instance.new("Frame", Main)
+TopContainer.Size = UDim2.new(0.8, 0, 0.4, 0)
+TopContainer.Position = UDim2.new(0.1, 0, 0.15, 0)
+TopContainer.BackgroundTransparency = 1
+
+local CmdPage = Instance.new("ScrollingFrame", TopContainer)
+CmdPage.Size = UDim2.new(1, 0, 1, 0)
+CmdPage.BackgroundTransparency = 1
+CmdPage.CanvasSize = UDim2.new(0, 0, 3, 0)
+CmdPage.ScrollBarThickness = 0
+
+local Grid = Instance.new("UIGridLayout", CmdPage)
+Grid.CellSize = UDim2.new(0, _G.tileSize, 0, _G.tileSize)
+Grid.CellPadding = UDim2.new(0, 8, 0, 8)
+Grid.HorizontalAlignment = "Center"
+
+-- [[ BOTTOM RIGHT: CONSOLE & TERMINAL ]] --
+local BottomRightContainer = Instance.new("Frame", Main)
+BottomRightContainer.Size = UDim2.new(0.35, 0, 0.35, 0)
+BottomRightContainer.Position = UDim2.new(0.63, 0, 0.6, 0)
+BottomRightContainer.BackgroundTransparency = 1
+
+local Console = Instance.new("ScrollingFrame", BottomRightContainer)
+Console.Size = UDim2.new(1, 0, 0.7, 0)
+Console.BackgroundTransparency = 1
+Console.AutomaticCanvasSize = "Y"
+Console.ScrollBarThickness = 0
+local ConsoleList = Instance.new("UIListLayout", Console)
+ConsoleList.VerticalAlignment = "Bottom"
+ConsoleList.HorizontalAlignment = "Right"
+
+local TerminalInput = Instance.new("TextBox", BottomRightContainer)
+TerminalInput.Size = UDim2.new(0.9, 0, 0, 30)
+TerminalInput.Position = UDim2.new(0.1, 0, 0.8, 0)
+TerminalInput.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+TerminalInput.BackgroundTransparency = 0.4
+TerminalInput.BorderSizePixel = 1
+TerminalInput.BorderColor3 = Color3.fromRGB(40, 40, 40)
+TerminalInput.Text = "terminal..."
+TerminalInput.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+TerminalInput.Font = "Code"
+TerminalInput.TextSize = 14
+TerminalInput.TextXAlignment = "Right"
+TerminalInput.ClearTextOnFocus = true
+
+local FooterBranding = Instance.new("TextLabel", BottomRightContainer)
+FooterBranding.Size = UDim2.new(1, 0, 0, 20)
+FooterBranding.Position = UDim2.new(0, 0, 0.92, 0)
+FooterBranding.BackgroundTransparency = 1
+FooterBranding.Text = "ULTIMATE TROLL EM v4.0.0_STABLE"
+FooterBranding.TextColor3 = Color3.fromRGB(80, 80, 80)
+FooterBranding.Font = "Code"
+FooterBranding.TextSize = 10
+FooterBranding.TextXAlignment = "Right"
+
+local function log(msg, success)
+    local l = Instance.new("TextLabel", Console)
+    l.Size = UDim2.new(1,0,0,16); l.BackgroundTransparency = 1
+    l.Text = msg:lower() .. " ::"
+    l.TextColor3 = success and Color3.new(0.6, 0.6, 0.6) or Color3.fromRGB(150, 50, 50)
+    l.Font = "Code"; l.TextSize = 11; l.TextXAlignment = "Right"
+end
+
+local function addCmd(n, cb)
+    local slug = n:gsub("%s+", ""):lower()
+    _G.CommandRegistry[slug] = {callback = cb, originalName = n}
+    local t = Instance.new("TextButton", CmdPage)
+    t.Name = slug
+    t.Text = n:lower()
+    t.Font = "Code"
+    t.BorderSizePixel = 1
+    t.BorderColor3 = Color3.fromRGB(45, 45, 45)
+    t.TextWrapped = true
+    t.TextSize = 10
+    
+    local function updateUI()
+        t.BackgroundColor3 = _G.States[n] and Color3.fromRGB(60, 60, 60) or Color3.fromRGB(15, 15, 15)
+        t.BackgroundTransparency = 0.5
+        t.TextColor3 = _G.States[n] and Color3.new(1, 1, 1) or Color3.new(0.5, 0.5, 0.5)
+    end
+    
+    t.MouseButton1Click:Connect(function()
+        _G.States[n] = not _G.States[n]
+        local s, e = pcall(cb)
+        updateUI(); log(n, s)
+    end)
+    updateUI()
+end
+
+-- [[ TERMINAL LOGIC ]] --
+TerminalInput.FocusLost:Connect(function(enter)
+    if enter then
+        local raw = TerminalInput.Text:lower()
+        local args = raw:split(" ")
+        local cmdKey = args[1]
+        if _G.CommandRegistry[cmdKey] then
+            local cmd = _G.CommandRegistry[cmdKey]
+            _G.States[cmd.originalName] = not _G.States[cmd.originalName]
+            local s, e = pcall(cmd.callback)
+            log("toggle: " .. cmd.originalName, s)
+            if CmdPage:FindFirstChild(cmdKey) then
+                local btn = CmdPage[cmdKey]
+                btn.BackgroundColor3 = _G.States[cmd.originalName] and Color3.fromRGB(60, 60, 60) or Color3.fromRGB(15, 15, 15)
+            end
+        elseif cmdKey == "target" and args[2] then
+            _G.target = args[2]
+            log("target -> " .. _G.target, true)
+        else
+            local s, e = pcall(function() loadstring(TerminalInput.Text)() end)
+            log("lua_run", s)
+        end
+        TerminalInput.Text = ""
+    end
+end)
+
+-- [[ RESTORING ALL COMMANDS ]] --
+addCmd("Seraphic Blade", function() loadstring(game:HttpGet("https://pastefy.app/59mJGQGe/raw"))() end)
+addCmd("Max Hitbox", function() for _, p in pairs(GetTargets()) do if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then p.Character.HumanoidRootPart.Size = Vector3.new(30, 30, 30); p.Character.HumanoidRootPart.Transparency = 0.7; p.Character.HumanoidRootPart.CanCollide = false end end end)
+addCmd("Smallest Hitbox", function() for _, p in pairs(GetTargets()) do if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then p.Character.HumanoidRootPart.Size = Vector3.new(0.1, 0.1, 0.1); p.Character.HumanoidRootPart.Transparency = 0 end end end)
+addCmd("Default Hitbox", function() for _, p in pairs(GetTargets()) do if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then p.Character.HumanoidRootPart.Size = Vector3.new(2, 2, 1); p.Character.HumanoidRootPart.Transparency = 0 end end end)
+addCmd("Nameless Admin", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/FilteringEnabled/NamelessAdmin/main/Source'))() end)
+addCmd("Gun", function() loadstring(game:HttpGet("https://pastebin.com/raw/0hn40Zbc"))() end)
+addCmd("Fly", function() _G.flying = _G.States["Fly"] end)
+addCmd("Noclip", function() _G.noclip = _G.States["Noclip"] end)
+addCmd("InfJump", function() _G.infJump = _G.States["InfJump"] end)
+addCmd("Sawnick", function() LP.Character.Humanoid.WalkSpeed = _G.States["Sawnick"] and 500 or 16 end)
+addCmd("Admin", function() loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))() end)
+addCmd("TP", function() LP.Character.HumanoidRootPart.CFrame = GetTargets()[1].Character.HumanoidRootPart.CFrame end)
+addCmd("Fling", function() loadstring(game:HttpGet("https://raw.githubusercontent.com/K1LAS1K/Ultimate-Fling-GUI/main/flingscript.lua"))() end)
+addCmd("Orbit", function() _G.predator = _G.States["Orbit"] end)
+addCmd("Invisible", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Invisible%20Gui'))() end)
+addCmd("ESP", function() _G.esp = _G.States["ESP"] for _,p in pairs(Players:GetPlayers()) do if p.Character then if _G.esp then Instance.new("Highlight", p.Character) else if p.Character:FindFirstChild("Highlight") then p.Character.Highlight:Destroy() end end end end end)
+addCmd("InfYield", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() end)
+addCmd("Dex", function() loadstring(game:HttpGet("https://obj.wearedevs.net/2/scripts/Dex%20Explorer.lua"))() end)
+addCmd("Jetpack", function() _G.jetpack = _G.States["Jetpack"]; _G.flying = _G.jetpack; _G.flySpeed = 100 end)
+addCmd("Ghoul", function() _G.ghoul = _G.States["Ghoul"]; _G.noclip = _G.ghoul if LP.Character then for _,v in pairs(LP.Character:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = _G.ghoul and 0.5 or 0 end end end end)
+addCmd("tanker", function() LP.Character.Humanoid.MaxHealth = 100000; LP.Character.Humanoid.Health = 100000 end)
+addCmd("tp shit", function() _G.target = "others"; log("targeting others", true) end)
+addCmd("Master", function() loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))() loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpyV2/master/simple-spy-v3.lua"))() end)
+addCmd("Simple Spy", function() loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))() end)
+addCmd("Script Searcher", function() loadstring(game:HttpGet("https://pastefy.app/cIrUcSTO/raw"))() end)
+
+local HubGames = {
+    [994732206] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Blox%20Fruit.lua",
+    [1268927906] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Muscle%20Legends.lua",
+    [3808081382] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/The%20Strongest%20Battleground.lua",
+    [6401952734] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Pet%20GO.lua",
+    [5750914919] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/main/Fisch.lua",
+    [7436755782] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Grow%20a%20Garden.lua",
+    [6701277882] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Fish%20It.lua",
+    [7671049560] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/The%20Forge.lua",
+    [9363735110] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Escape%20Tsunami%20For%20Brainrots.lua",
+    [8144728961] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Abyss.lua",
+    [9509842868] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Garden%20Horizons.lua",
+    [9186719164] = "https://raw.githubusercontent.com/AhmadV99/Script-Games/refs/heads/main/Sailor%20Piece.lua"
+}
+addCmd("Auto Game Hub", function()
+    local placeId = game.PlaceId
+    if HubGames[placeId] then loadstring(game:HttpGet(HubGames[placeId]))() else log("no script for id", false) end
+end)
+
+-- [[ TOGGLE BUTTON ]] --
+local ToggleBtn = Instance.new("TextButton", ScreenGui)
+ToggleBtn.Size = UDim2.new(0, 80, 0, 30)
+ToggleBtn.Position = UDim2.new(1, -90, 1, -40)
+ToggleBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+ToggleBtn.Text = "OPEN"; ToggleBtn.TextColor3 = Color3.new(0.6, 0.6, 0.6); ToggleBtn.Font = "Code"
+ToggleBtn.BorderSizePixel = 1
+
+ToggleBtn.MouseButton1Click:Connect(function()
+    Main.Visible = not Main.Visible
+    ToggleBtn.Text = Main.Visible and "CLOSE" or "OPEN"
+end)
+
+-- [[ LOOPS ]] --
+RunService.Stepped:Connect(function()
+    if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
+        if _G.noclip then for _,v in pairs(LP.Character:GetDescendants()) do if v:IsA("BasePart") then v.CanCollide = false end end end
+        if _G.flying then LP.Character.HumanoidRootPart.Velocity = Camera.CFrame.LookVector * _G.flySpeed end
+        if _G.predator then 
+            local t = GetTargets()[1] 
+            if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then 
+                LP.Character.HumanoidRootPart.CFrame = t.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,5) 
+            end 
+        end
+    end
+end)
+UIS.JumpRequest:Connect(function() if _G.infJump and LP.Character:FindFirstChild("Humanoid") then LP.Character.Humanoid:ChangeState("Jumping") end end)
