@@ -1,5 +1,3 @@
--- [[ ULTIMATE TROLL EM 4.0 - UNIVERSAL LOADER ]] --
-
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
