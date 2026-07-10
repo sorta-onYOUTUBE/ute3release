@@ -12,17 +12,17 @@ local Tab = Window:CreateTab("Library Select", 4483362458)
 
 Tab:CreateSection("Choose Your GUI Style")
 
--- [[ 4.0 ]] --
+-- [[ 6.0.1 ]] --
 Tab:CreateButton({
-    Name = "4.0 (Legacy or Rayfield GUI)",
+    Name = "TE ULTIMATUM 6.0.1",
     Callback = function()
-        Rayfield:Notify({Title = "Loading...", Content = "Executing UTE 4", Duration = 3})
+        Rayfield:Notify({Title = "Loading...", Content = "Executing ULTIMATUM", Duration = 3})
         Rayfield:Destroy() -- Closes loader
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/UTE4loader.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/TE%20ULTIMATUM%206.0.1"))()
     end,
 })
 
-Tab:CreateLabel("The most powerful GEN 1 Troll em script.")
+Tab:CreateLabel("The most powerful Troll em script.")
 
 -- [[ PLASMA GUI BUTTON ]] --
 Tab:CreateButton({
