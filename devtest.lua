@@ -9,9 +9,9 @@ Q("TextLabel",T,{Size=UDim2.new(0.9,0,1,0),Text="TE EXTRAS // TERMINAL",TextColo
 Q("TextButton",T,{Size=UDim2.new(0,30,0,30),Position=UDim2.new(1,-60,0,0),Text="_",TextColor3=Yl,Font=Enum.Font.Code,TextSize=16,BackgroundTransparency=1}).MouseButton1Click:Connect(function()M.Visible=false;MaxR.Visible=true end)
 Q("TextButton",T,{Size=UDim2.new(0,30,0,30),Position=UDim2.new(1,-30,0,0),Text="X",TextColor3=Rd,Font=Enum.Font.Code,TextSize=16,BackgroundTransparency=1}).MouseButton1Click:Connect(function()G:Destroy()end)
 
--- BRIGHT VISIBLE MAXIMIZE BUTTON (RIGHT SIDE)
-local MaxR=Q("TextButton",G,{Size=UDim2.new(0,35,0,90),Position=UDim2.new(1,-40,0.5,-45),Text="M\nA\nX",TextColor3=Color3.new(1,1,1),Font=Enum.Font.Code,TextSize=12,BackgroundColor3=Color3.fromRGB(100,0,150),Visible=false,ZIndex=999,BorderSizePixel=0})
-Q("UICorner",MaxR,{CornerRadius=UDim.new(0,6)})
+-- MAXIMIZE BUTTON (Identical to Part 1, but positioned on the Right)
+local MaxR=Q("TextButton",G,{Size=UDim2.new(0,28,0,80),Position=UDim2.new(1,-33,0.5,-40),Text="M\nA\nX",TextColor3=P,TextStrokeColor3=DmP,TextStrokeTransparency=0.5,Font=Enum.Font.Code,TextSize=10,BackgroundColor3=Color3.fromRGB(12,8,20),Visible=false,ZIndex=100,BorderSizePixel=0})
+Q("UICorner",MaxR,{CornerRadius=UDim.new(0,4)});Q("UIStroke",MaxR,{Color=DmP,Thickness=1})
 MaxR.MouseButton1Click:Connect(function()MaxR.Visible=false;M.Visible=true end)
 
 local L=Q("Frame",M,{Size=UDim2.new(0.4,0,1,-30),Position=UDim2.new(0,0,0,30),BackgroundColor3=Color3.fromRGB(5,5,10),BorderSizePixel=0})
