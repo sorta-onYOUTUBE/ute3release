@@ -1,3 +1,7 @@
+pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/raavenkkj/anti-kick/main/anti-kick.lua"))()
+end)
+
 local UIS,RS,Pl,H,LP,Cam=game:GetService("UserInputService"),game:GetService("RunService"),game:GetService("Players"),game:GetService("HttpService"),game:GetService("Players").LocalPlayer,workspace.CurrentCamera
 if game.CoreGui:FindFirstChild("TE_ULTIMATUM_GEN2")then game.CoreGui.TE_ULTIMATUM_GEN2:Destroy()end if game.CoreGui:FindFirstChild("TE_EXTRAS")then game.CoreGui.TE_EXTRAS:Destroy()end
 local Gui=Instance.new("ScreenGui",game.CoreGui)Gui.Name="TE_ULTIMATUM_GEN2"Gui.ResetOnSpawn=false Gui.IgnoreGuiInset=true
