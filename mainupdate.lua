@@ -1,7 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "ULTIMATE TROLL EM 4.0 | LOADER",
+    Name = "LATEST TROLL EMs | LOADER",
     LoadingTitle = "Hello, user!",
     LoadingSubtitle = "Select your interface style",
     ConfigurationSaving = { Enabled = false },
