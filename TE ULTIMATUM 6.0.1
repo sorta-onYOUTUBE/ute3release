@@ -1,0 +1,93 @@
+local UIS,RS,Pl,H,LP,Cam=game:GetService("UserInputService"),game:GetService("RunService"),game:GetService("Players"),game:GetService("HttpService"),game:GetService("Players").LocalPlayer,workspace.CurrentCamera
+if game.CoreGui:FindFirstChild("TE_ULTIMATUM_GEN2")then game.CoreGui.TE_ULTIMATUM_GEN2:Destroy()end if game.CoreGui:FindFirstChild("TE_EXTRAS")then game.CoreGui.TE_EXTRAS:Destroy()end
+local Gui=Instance.new("ScreenGui",game.CoreGui)Gui.Name="TE_ULTIMATUM_GEN2"Gui.ResetOnSpawn=false Gui.IgnoreGuiInset=true
+local P,DP,DmP,Gr,Rd,Yl,Cy=Color3.fromRGB(170,0,255),Color3.fromRGB(50,0,75),Color3.fromRGB(85,0,128),Color3.fromRGB(0,255,100),Color3.fromRGB(255,50,50),Color3.fromRGB(255,255,0),Color3.fromRGB(0,200,255)
+local function Q(c,p,t)local i=Instance.new(c)if p then i.Parent=p end if t then for k,v in pairs(t)do pcall(function()i[k]=v end)end end return i end
+local St={r=170,g=0,b=255,flySpd=50,fly=false,infJ=false,noclip=false,orbit=false,esp=false,ghoul=false,tgt="s",grid=15,tile=85,build=false,Toggles={},Pos={},hist={},hIdx=0}
+local Cmds,UI={}, {Btns={},Acc={},Lines={}}
+local CF="TE_Ult2.json"
+local function Save()pcall(function()writefile(CF,H:JSONEncode({T=St.Toggles,P=St.Pos,C={St.r,St.g,St.b}}))end)end
+local function Load()if isfile(CF)then local s,d=pcall(function()return H:JSONDecode(readfile(CF))end)if s then St.Toggles=d.T or{} St.Pos=d.P or{} if d.C then St.r,St.g,St.b=unpack(d.C)end end end end
+local function Upd(b)if St.Toggles[b.Name]then pcall(function()b.BackgroundColor3=P;b.BackgroundTransparency=0;b.TextStrokeTransparency=0.5 end)else pcall(function()b.BackgroundColor3=Color3.fromRGB(20,20,30);b.BackgroundTransparency=0.3;b.TextStrokeTransparency=1 end)end end
+local function GetTgts()local t,v=St.tgt:lower(),{} if t=="all"then return Pl:GetPlayers()elseif t=="others"then for _,p in pairs(Pl:GetPlayers())do if p~=LP then table.insert(v,p)end end elseif t=="s"or t=="me"then return{LP}else for _,p in pairs(Pl:GetPlayers())do if p.Name:lower():sub(1,#t)==t then table.insert(v,p)end end end return v end
+local function Snap(p)local s=St.grid;return UDim2.new(0,math.clamp(math.floor(p.X.Offset/s+0.5)*s,0,600-St.tile),0,math.floor(p.Y.Offset/s+0.5)*s)end
+local function Repel(m)for _,b in pairs(UI.Btns)do if b~=m then local d=(Vector2.new(b.Position.X.Offset,b.Position.Y.Offset)-Vector2.new(m.Position.X.Offset,m.Position.Y.Offset)).Magnitude if d<15 then b.Position=Snap(UDim2.new(0,b.Position.X.Offset+91,0,b.Position.Y.Offset));St.Pos[b.Name]={b.Position.X.Offset,b.Position.Y.Offset};Repel(b)end end end end
+local function Drag(b)local d,s,p; b.InputBegan:Connect(function(i)if St.build and(i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch)then d=true;s=i.Position;p=b.Position;b.ZIndex=50 end end);b.InputEnded:Connect(function()if d then d=false;b.ZIndex=1;b.Position=Snap(b.Position);St.Pos[b.Name]={b.Position.X.Offset,b.Position.Y.Offset};Repel(b);Save()end end);UIS.InputChanged:Connect(function(i)if d and(i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch)then b.Position=UDim2.new(0,p.X.Offset+(i.Position-s).X,0,p.Y.Offset+(i.Position-s).Y)end end)end
+
+local Main=Q("Frame",Gui,{Size=UDim2.new(0.75,0,0.75,0),Position=UDim2.new(0.5,0,0.45,0),AnchorPoint=Vector2.new(0.5,0.5),BackgroundColor3=Color3.fromRGB(8,8,12),BackgroundTransparency=0.05,Visible=false,BorderSizePixel=0})
+Q("UICorner",Main,{CornerRadius=UDim.new(0,8)});Q("UIStroke",Main,{Color=DmP,Thickness=1,Transparency=0.3})
+local TBar=Q("Frame",Main,{Size=UDim2.new(1,0,0,35),BackgroundColor3=Color3.fromRGB(15,15,25),BorderSizePixel=0})
+local TLab=Q("TextLabel",TBar,{Size=UDim2.new(0.8,0,1,0),Position=UDim2.new(0.02,0,0,0),BackgroundTransparency=1,Text="TE ULTIMATUM GEN 2 // v6.0.1",TextColor3=P,TextStrokeColor3=DP,TextStrokeTransparency=0.5,Font=Enum.Font.Code,TextSize=14,TextXAlignment="Left"})table.insert(UI.Acc,TLab)
+local TgtLab=Q("TextLabel",TBar,{Size=UDim2.new(0.15,0,1,0),Position=UDim2.new(0.82,0,0,0),BackgroundTransparency=1,Text="TARGET: "..St.tgt:upper(),TextColor3=Cy,Font=Enum.Font.Code,TextSize=10,TextXAlignment="Right"})
+
+local XBtn=Q("TextButton",TBar,{Size=UDim2.new(0,30,0,35),Position=UDim2.new(1,-30,0,0),Text="X",TextColor3=Rd,Font=Enum.Font.Code,TextSize=18,BackgroundTransparency=1})
+local ExBox=Q("Frame",Main,{Size=UDim2.new(0,250,0,100),Position=UDim2.new(0.5,0,0.5,0),AnchorPoint=Vector2.new(0.5,0.5),BackgroundColor3=Color3.fromRGB(20,0,40),Visible=false,ZIndex=100})
+Q("UIStroke",ExBox,{Color=P,Thickness=1});Q("UICorner",ExBox,{CornerRadius=UDim.new(0,6)})
+Q("TextLabel",ExBox,{Size=UDim2.new(1,0,0.5,0),Text="Do you want to exit?",TextColor3=Color3.new(1,1,1),Font=Enum.Font.Code,TextSize=14,ZIndex=101})
+Q("TextButton",ExBox,{Size=UDim2.new(0.4,0,0,30),Position=UDim2.new(0.05,0,0.6,0),Text="Yes",BackgroundColor3=Color3.fromRGB(150,0,0),TextColor3=Color3.new(1,1,1),Font=Enum.Font.Code,TextSize=14,ZIndex=101}).MouseButton1Click:Connect(function()Main.Visible=false end)
+Q("TextButton",ExBox,{Size=UDim2.new(0.4,0,0,30),Position=UDim2.new(0.55,0,0.6,0),Text="No",BackgroundColor3=Color3.fromRGB(0,80,0),TextColor3=Color3.new(1,1,1),Font=Enum.Font.Code,TextSize=14,ZIndex=101}).MouseButton1Click:Connect(function()ExBox.Visible=false end)
+XBtn.MouseButton1Click:Connect(function()ExBox.Visible=true end)
+
+local LPan=Q("Frame",Main,{Size=UDim2.new(0.28,0,1,-35),Position=UDim2.new(0,0,0,35),BackgroundColor3=Color3.fromRGB(12,12,18),BorderSizePixel=0})
+Q("TextLabel",LPan,{Size=UDim2.new(1,0,0,25),BackgroundColor3=Color3.fromRGB(20,20,35),Text="  COMMANDS",TextColor3=DmP,Font=Enum.Font.Code,TextSize=11,TextXAlignment="Left"})
+local CList=Q("ScrollingFrame",LPan,{Size=UDim2.new(1,0,1,-25),Position=UDim2.new(0,0,0,25),BackgroundTransparency=1,ScrollBarThickness=3,ScrollBarImageColor3=DmP,AutomaticCanvasSize="Y"})
+Q("UIListLayout",CList,{Padding=UDim.new(0,2),SortOrder=Enum.SortOrder.LayoutOrder})
+
+-- FIXED DARK TERMINAL BACKGROUND
+local CPan=Q("Frame",Main,{Size=UDim2.new(0.42,0,1,-35),Position=UDim2.new(0.28,0,0,35),BackgroundColor3=Color3.fromRGB(5,5,10),BorderSizePixel=0})
+local TOut=Q("ScrollingFrame",CPan,{Size=UDim2.new(1,-4,1,-40),Position=UDim2.new(0,2,0,0),BackgroundTransparency=0,ScrollBarThickness=3,ScrollBarImageColor3=DmP,AutomaticCanvasSize="Y",CanvasSize=UDim2.new(0,0,0,0)})
+Q("UIListLayout",TOut,{Padding=UDim.new(0,1),VerticalAlignment="Bottom",SortOrder=Enum.SortOrder.LayoutOrder})
+local TF=Q("Frame",CPan,{Size=UDim2.new(1,-4,0,32),Position=UDim2.new(0,2,1,-36),BackgroundColor3=Color3.fromRGB(15,15,25),BorderSizePixel=0})
+Q("TextLabel",TF,{Size=UDim2.new(0,30,1,0),BackgroundTransparency=1,Text=">",TextColor3=Gr,Font=Enum.Font.Code,TextSize=14,TextXAlignment="Center"})
+local TIn=Q("TextBox",TF,{Size=UDim2.new(1,-35,1,0),Position=UDim2.new(0,30,0,0),BackgroundTransparency=1,Text="",PlaceholderText="type 'help'...",PlaceholderColor3=Color3.fromRGB(60,60,80),TextColor3=P,TextStrokeColor3=DP,TextStrokeTransparency=0.7,Font=Enum.Font.Code,TextSize=14,ClearTextOnFocus=false,TextXAlignment="Left"})
+
+local RPan=Q("Frame",Main,{Size=UDim2.new(0.30,0,1,-35),Position=UDim2.new(0.70,0,0,35),BackgroundColor3=Color3.fromRGB(12,12,18),BorderSizePixel=0})
+Q("TextLabel",RPan,{Size=UDim2.new(1,0,0,25),BackgroundColor3=Color3.fromRGB(20,20,35),Text="  QUICK ACCESS",TextColor3=DmP,Font=Enum.Font.Code,TextSize=11,TextXAlignment="Left"})
+local BGrid=Q("ScrollingFrame",RPan,{Size=UDim2.new(1,0,1,-55),Position=UDim2.new(0,0,0,25),BackgroundTransparency=1,ScrollBarThickness=3,ScrollBarImageColor3=DmP,AutomaticCanvasSize="Y",ClipsDescendants=true})
+local Grid=Q("UIGridLayout",BGrid,{CellSize=UDim2.new(0,St.tile,0,32),CellPadding=UDim2.new(0,6,0,6),SortOrder=Enum.SortOrder.LayoutOrder})
+local BBar=Q("Frame",RPan,{Size=UDim2.new(1,0,0,30),Position=UDim2.new(0,0,1,-30),BackgroundColor3=Color3.fromRGB(15,15,25),BorderSizePixel=0})
+local BBtn=Q("TextButton",BBar,{Size=UDim2.new(0.33,0,1,0),BackgroundTransparency=1,Text="BUILD",TextColor3=Color3.fromRGB(100,100,120),Font=Enum.Font.Code,TextSize=9})
+local SBtn=Q("TextButton",BBar,{Size=UDim2.new(0.33,0,1,0),Position=UDim2.new(0.34,0,0,0),BackgroundTransparency=1,Text="SAVE",TextColor3=Color3.fromRGB(100,100,120),Font=Enum.Font.Code,TextSize=9})
+local RBtn=Q("TextButton",BBar,{Size=UDim2.new(0.33,0,1,0),Position=UDim2.new(0.67,0,0,0),BackgroundTransparency=1,Text="RESET",TextColor3=Color3.fromRGB(100,100,120),Font=Enum.Font.Code,TextSize=9})
+local Mini=Q("TextButton",Gui,{Size=UDim2.new(0,120,0,28),Position=UDim2.new(0.5,-60,1,-32),BackgroundColor3=Color3.fromRGB(12,8,20),BorderSizePixel=0,Text="TE-ULTIMATUM",TextColor3=P,TextStrokeColor3=DP,TextStrokeTransparency=0.5,Font=Enum.Font.Code,TextSize=11,ZIndex=100})
+Q("UICorner",Mini,{CornerRadius=UDim.new(0,4)});Q("UIStroke",Mini,{Color=DmP});table.insert(UI.Acc,Mini)
+task.spawn(function()local a=true;while Mini and Mini.Parent do if not Main.Visible then Mini.Text=a and "TE-ULTIMATUM" or "v6.0.1 // CLICK";a=not a end task.wait(1.2)end end)
+
+local lnC=0
+function logT(m,s,c)lnC=lnC+1;local l=Q("TextLabel",TOut,{Size=UDim2.new(1,0,0,18),BackgroundTransparency=1,Font=Enum.Font.Code,TextSize=13,TextXAlignment="Left",LayoutOrder=lnC,ZIndex=1})if c then l.Text="  "..m;pcall(function()l.TextColor3=c end)elseif s==nil then l.Text="  "..m;pcall(function()l.TextColor3=Color3.fromRGB(150,150,170)end)else l.Text="  "..m..(s and " [OK]" or " [ERR]");pcall(function()l.TextColor3=s and Gr or Rd end)end task.wait(0.05);TOut.CanvasPosition=Vector2.new(0,99999);table.insert(UI.Lines,l)if #UI.Lines>200 then table.remove(UI.Lines,1):Destroy()end end
+local function clearT()for _,l in pairs(TOut:GetChildren())do if l:IsA("TextLabel")then l:Destroy()end end UI.Lines={};lnC=0 end
+
+local cO=0
+local function addCmd(n,d,cb)cO=cO+1;Cmds[n:lower()]={cb=cb,d=d or""}local l=Q("TextButton",CList,{Size=UDim2.new(1,0,0,18),BackgroundTransparency=1,Font=Enum.Font.Code,TextSize=10,TextXAlignment="Left",LayoutOrder=cO,Text=" "..n,TextColor3=Color3.fromRGB(120,120,140),AutoButtonColor=false})l.MouseEnter:Connect(function()pcall(function()l.TextColor3=P;l.Text=" "..n.." - "..d end)end);l.MouseLeave:Connect(function()pcall(function()l.TextColor3=Color3.fromRGB(120,120,140);l.Text=" "..n end)end);l.MouseButton1Click:Connect(function()TIn.Text=n;TIn:CaptureFocus()end)local t=Q("TextButton",BGrid,{Name=n,Text=n,Font=Enum.Font.Code,BorderSizePixel=0,TextSize=10,TextColor3=Color3.new(1,1,1),LayoutOrder=cO})if St.Pos[n]then Grid.Enabled=false;t.Position=UDim2.new(0,St.Pos[n][1],0,St.Pos[n][2])end Upd(t);Drag(t)t.MouseButton1Click:Connect(function()if not St.build then St.Toggles[n]=not St.Toggles[n];local s=pcall(cb);Upd(t);logT(n,s);Save()end end)table.insert(UI.Btns,t)end
+
+addCmd("Fly","Flight",function()St.fly=St.Toggles["Fly"]end)
+addCmd("Noclip","Walls",function()St.noclip=St.Toggles["Noclip"]end)
+addCmd("InfJump","Jump",function()St.infJ=St.Toggles["InfJump"]end)
+addCmd("Sawnick","Speed",function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.WalkSpeed=St.Toggles["Sawnick"]and 500 or 16 end end)
+addCmd("Jetpack","Fast Fly",function()St.fly=St.Toggles["Jetpack"];St.flySpd=100 end)
+addCmd("Orbit","Follow",function()St.orbit=St.Toggles["Orbit"]end)
+addCmd("TP","Teleport",function()local t=GetTgts()[1];if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart")and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=t.Character.HumanoidRootPart.CFrame end end)
+addCmd("Fling","Fling",function()pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/K1LAS1K/Ultimate-Fling-GUI/main/flingscript.lua"))()end)end)
+addCmd("Nuke","Tgt Others",function()St.tgt="others";TgtLab.Text="TARGET: OTHERS"end)
+addCmd("ESP","Highlight",function()St.esp=St.Toggles["ESP"];for _,p in pairs(Pl:GetPlayers())do if p.Character then if St.esp then if not p.Character:FindFirstChild("Highlight")then Instance.new("Highlight",p.Character)end else local h=p.Character:FindFirstChild("Highlight")if h then h:Destroy()end end end end end)
+addCmd("Ghoul","Ghost",function()St.ghoul=St.Toggles["Ghoul"];St.noclip=St.ghoul;if LP.Character then for _,v in pairs(LP.Character:GetDescendants())do if v:IsA("BasePart")then v.Transparency=St.ghoul and 0.5 or 0 end end end end)
+addCmd("Tank","HP",function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.MaxHealth=100000;LP.Character.Humanoid.Health=100000 end end)
+addCmd("Change BG","Color",function()Main.BackgroundColor3=Color3.fromRGB(math.random(30),0,0);P=Color3.fromHSV(math.random(),0.8,1);for _,b in pairs(UI.Btns)do Upd(b)end for _,t in pairs(UI.Acc)do pcall(function()t.TextColor3=P end)end end)
+addCmd("Load Extras","Archive",function()pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/devtest.lua"))()end)end)
+
+local function Proc(inp)local c=string.lower(string.gsub(inp,"%s+"," "):match("^%s*(.-)%s*$"))if not c or c==""then return end local a={};for w in c:gmatch("%S+")do table.insert(a,w)end local m=a[1] if m=="help"then logT("help/clear/target/spd/status/exit",nil,Yl)elseif m=="clear"or m=="cls"then clearT();logT("Cleared.",true)elseif m=="target"then St.tgt=a[2]or"s";TgtLab.Text="TARGET: "..St.tgt:upper();logT("Target: "..St.tgt,true)elseif m=="speed"then St.flySpd=tonumber(a[2])or 50;logT("Speed: "..St.flySpd,true)elseif m=="exec"then local e=a[2];if e and Cmds[e]then St.Toggles[e]=not St.Toggles[e];local s=pcall(Cmds[e].cb);for _,b in pairs(UI.Btns)do if b.Name:lower()==e then Upd(b)end end;logT("Exec: "..e,s);Save()else logT("Unknown: "..tostring(e),false)end elseif m=="status"then logT("-- ACTIVE --",nil,P);local any=false;for n,s in pairs(St.Toggles)do if s then logT("[ON] "..n,nil,Gr);any=true end end if not any then logT("None",nil,Color3.fromRGB(100,100,120))end elseif m=="exit"then Main.Visible=false elseif Cmds[m]then St.Toggles[m]=not St.Toggles[m];local s=pcall(Cmds[m].cb);for _,b in pairs(UI.Btns)do if b.Name:lower()==m then Upd(b)end end;logT(m,s);Save()else logT("Unknown: "..m,false)end end
+TIn.FocusLost:Connect(function(e)if e then local i=TIn.Text;TIn.Text="";if i~=""then table.insert(St.hist,i);St.hIdx=#St.hist+1;logT("> "..i,nil,Gr);Proc(i)end end end)
+TIn.InputBegan:Connect(function(i)if i.KeyCode==Enum.KeyCode.Up then if St.hIdx>1 then St.hIdx=St.hIdx-1;TIn.Text=St.hist[St.hIdx]or""end elseif i.KeyCode==Enum.KeyCode.Down then if St.hIdx<#St.hist then St.hIdx=St.hIdx+1;TIn.Text=St.hist[St.hIdx]or""else St.hIdx=#St.hist+1;TIn.Text=""end end end)
+Mini.MouseButton1Click:Connect(function()Main.Visible=true;Mini.Visible=false;TIn:CaptureFocus()end)
+SBtn.MouseButton1Click:Connect(function()Save();logT("Saved.",true)end)
+RBtn.MouseButton1Click:Connect(function()St.Pos={};Grid.Enabled=true;task.wait(0.1);Grid.Enabled=false;for _,b in pairs(UI.Btns)do St.Pos[b.Name]={b.Position.X.Offset,b.Position.Y.Offset}end;Save();logT("Reset.",true)end)
+BBtn.MouseButton1Click:Connect(function()St.build=not St.build;pcall(function()BBtn.TextColor3=St.build and Yl or Color3.fromRGB(100,100,120)end);if St.build then for _,b in pairs(UI.Btns)do local p=b.AbsolutePosition-BGrid.AbsolutePosition;b.Position=UDim2.new(0,p.X,0,p.Y+BGrid.CanvasPosition.Y)end;Grid.Enabled=false;logT("Build ON",nil,Yl)else Grid.Enabled=true;logT("Build OFF",nil)end end)
+Load()
+local Start=Q("Frame",Gui,{Size=UDim2.new(1,0,1,0),BackgroundColor3=Color3.new(0,0,0),ZIndex=100})
+local WT=Q("TextLabel",Start,{Size=UDim2.new(1,0,0.15,0),Position=UDim2.new(0,0,0.3,0),BackgroundTransparency=1,Text="TE ULTIMATUM GEN 2",TextColor3=P,TextStrokeColor3=DP,TextStrokeTransparency=0.3,Font=Enum.Font.Code,TextSize=40,ZIndex=101})table.insert(UI.Acc,WT)
+Q("TextLabel",Start,{Size=UDim2.new(1,0,0.05,0),Position=UDim2.new(0,0,0.45,0),BackgroundTransparency=1,Text="v6.0.1 // SPLIT EDITION",TextColor3=DmP,Font=Enum.Font.Code,TextSize=16,ZIndex=101})
+local function startB(t,x)local b=Q("TextButton",Start,{Size=UDim2.new(0,180,0,50),Position=UDim2.new(0.5,x,0.6,0),AnchorPoint=Vector2.new(0.5,0.5),Text=t,ZIndex=101,Font=Enum.Font.Code,TextSize=18,BackgroundColor3=P,TextColor3=Color3.new(1,1,1),BorderSizePixel=0});Q("UICorner",b,{CornerRadius=UDim.new(0,4)});b.MouseButton1Click:Connect(function()Start:Destroy();Main.Visible=true;Mini.Visible=false;logT("TE ULTIMATUM v6.0.1 Ready.",nil,P);logT("Type 'help'",nil,Cy);TIn:CaptureFocus()end)end
+startB("PC",-100);startB("MOBILE",100)
+RS.Stepped:Connect(function()pcall(function()if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then if St.noclip then for _,v in pairs(LP.Character:GetDescendants())do if v:IsA("BasePart")then v.CanCollide=false end end end;if St.fly then LP.Character.HumanoidRootPart.Velocity=Cam.CFrame.LookVector*St.flySpd end;if St.orbit then local t=GetTgts()[1];if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=t.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,5)end end end end)end)
+UIS.JumpRequest:Connect(function()if St.infJ then pcall(function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid:ChangeState("Jumping")end end)end end)
+Pl.PlayerAdded:Connect(function(p)p.CharacterAdded:Connect(function(c)if St.esp then task.wait(1);if not c:FindFirstChild("Highlight")then Instance.new("Highlight",c)end end end)end)
