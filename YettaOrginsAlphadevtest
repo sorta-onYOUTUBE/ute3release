@@ -1,8 +1,22 @@
+coroutine.wrap(function()
+-- ═══════════════════════════════════════════════════════════
+-- ISOLATION LAYER — severs executor→script trace chain
+-- ═══════════════════════════════════════════════════════════
+pcall(function()if hookfunction and debug and debug.getinfo then local _o=debug.getinfo hookfunction(debug.getinfo,function(...)local r=_o(...)if r and type(r.source)=="string"and(r.source:find("TE_GEN3")or r.source:find("TE_EXTRAS")or(r.short_src and r.short_src:find("TE_GEN3")))then r.source="=[C]";r.what="C";r.short_src="[C]";r.linedefined=-1;r.lastlinedefined=-1;r.name=nil;r.namewhat=nil end return r end)end end)
+pcall(function()if hookfunction and getscriptstack then hookfunction(getscriptstack,function()return{}end)end end)
+pcall(function()if hookfunction and getcallingscript then hookfunction(getcallingscript,function()return nil end)end end)
+pcall(function()if hookfunction and debug and debug.sethook then local _o=debug.sethook hookfunction(debug.sethook,function(...)local _,h=...if h and type(h)=="string"and(h=="l"or h=="line")then return nil end return _o(...)end)end end)
+pcall(function()if hookfunction and readfile then local _o=readfile hookfunction(readfile,function(p)if type(p)=="string"and(p:lower():find("executor")or p:lower():find("exploit")or p:lower():find("inject")or p:lower():find("workspace"))then return nil end return _o(p)end)end end)
+pcall(function()if hookfunction and isfile then local _o=isfile hookfunction(isfile,function(p)if type(p)=="string"and(p:lower():find("executor")or p:lower():find("exploit")or p:lower():find("inject")or p:lower():find("workspace"))then return false end return _o(p)end)end end)
+pcall(function()if hookfunction and listfiles then local _o=listfiles hookfunction(listfiles,function(p)local f={};for _,v in ipairs(_o(p))do if not(v:lower():find("executor")or v:lower():find("exploit")or v:lower():find("inject"))then f[#f+1]=v end end return f end)end end)
+-- ═══════════════════════════════════════════════════════════
+
 UIS,RS,Pl,H,LP,Cam=game:GetService("UserInputService"),game:GetService("RunService"),game:GetService("Players"),game:GetService("HttpService"),game:GetService("Players").LocalPlayer,workspace.CurrentCamera
-for _,n in pairs({"TE_GEN3_YETTA","TE_EXTRAS"})do local g=game.CoreGui:FindFirstChild(n)if g then g:Destroy()end end
+for _,g in pairs(game.CoreGui:GetChildren())do if g.Name:find("TE_GEN3")or g.Name:find("TE_EXTRAS")then g:Destroy()end end
 local oldNC
 pcall(function() if hookmetamethod and newcclosure then oldNC=hookmetamethod(game,"__namecall",newcclosure(function(self,...)local m=getnamecallmethod()if m=="Kick"then return nil end return oldNC(self,...)end))end end)
-G=Instance.new("ScreenGui",game.CoreGui)G.Name="TE_GEN3_YETTA"G.ResetOnSpawn=false G.IgnoreGuiInset=true
+local _sid=string.format("%x",math.random(0x100000,0xFFFFFF))
+G=Instance.new("ScreenGui",game.CoreGui)G.Name="TE_GEN3_".._sid G.ResetOnSpawn=false G.IgnoreGuiInset=true
 local sOk,sObj=pcall(Instance.new,"Sound",G) MSnd=sOk and sObj or{Volume=0.5,Looped=true,Play=function()end,Stop=function()end,SoundId=""}
 Rd,DRd,Gr,Yl,Cy=Color3.fromRGB(255,30,30),Color3.fromRGB(80,0,0),Color3.fromRGB(0,255,100),Color3.fromRGB(255,255,0),Color3.fromRGB(0,200,255)
 AddClip=nil
@@ -65,6 +79,16 @@ WT=Q("TextLabel",St,{Size=UDim2.new(1,0,.15,0),Position=UDim2.new(0,0,.3,0),Back
 Q("TextLabel",St,{Size=UDim2.new(1,0,.05,0),Position=UDim2.new(0,0,.45,0),BackgroundTransparency=1,Text="AGGRESSIVE REDESIGN // ANTI-KICK ACTIVE",TextColor3=DRd,Font=Enum.Font.Code,TextSize=16,ZIndex=101})
 function startB(t,x)local b=Q("TextButton",St,{Size=UDim2.new(0,180,0,50),Position=UDim2.new(.5,x,.6,0),AnchorPoint=Vector2.new(.5,.5),Text=t,ZIndex=101,Font=Enum.Font.Code,TextSize=18,BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=0.35,TextColor3=Color3.new(1,1,1),BorderSizePixel=0})Q("UIStroke",b,{Color=Color3.fromRGB(0,0,0),Thickness=4,Transparency=0.5})Q("UIStroke",b,{Color=DRd,Thickness=1})b.MouseButton1Click:Connect(function()St:Destroy();M.Visible=true;logT("TE GEN 3 YETTA ORIGINS α Ready.",nil,Rd);logT("Type 'help'",nil,Cy);Ti:CaptureFocus() end)end
 startB("PC",-100)startB("MOBILE",100)
+-- ═══════════════════════════════════════════════════════════════
+-- END OF PART 1 — PASTE PART 2 DIRECTLY BELOW THIS LINE
+-- ═══════════════════════════════════════════════════════════════
+-- ═══════════════════════════════════════════════════════════════
+-- TE GEN 3 YETTA ORIGINS α | PART 2 OF 2
+-- ═══════════════════════════════════════════════════════════════
+S._isolated=true Cmds._isolated=true UI._isolated=true
+S.pendingCmd=nil
+S.freeCam=false S.freeCamLocked=true S.freeCamClickTP=false S.freeCamSpeed=2 S.freeCamCFrame=CFrame.new() FCBar=nil _md=Vector2.new(0,0)
+UIS.InputChanged:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseMovement then _md=i.Delta end end)
 lC=0
 function logT(m,s,c)if not To then return end lC=lC+1;local l=Q("TextLabel",To,{Size=UDim2.new(1,0,0,18),BackgroundTransparency=1,Font=Enum.Font.Code,TextSize=13,TextXAlignment="Left",LayoutOrder=lC,ZIndex=1})if c then l.Text="  "..m;l.TextColor3=c elseif s==nil then l.Text="  "..m;l.TextColor3=Color3.fromRGB(150,150,170)else l.Text="  "..m..(s and " [OK]" or " [ERR]");l.TextColor3=s and Gr or Rd end task.wait(.05);pcall(function()To.CanvasPosition=Vector2.new(0,99999)end);UI.Lines[#UI.Lines+1]=l if#UI.Lines>200 then table.remove(UI.Lines,1):Destroy()end end
 function clearT()for _,l in pairs(To:GetChildren())do if l:IsA("TextLabel")then l:Destroy()end end UI.Lines={}lC=0 end
@@ -73,6 +97,9 @@ function addCmd(n,d,cb)cO=cO+1;Cmds[n:lower()]={cb=cb,d=d or"",name=n}local l=Q(
 local function upL()if S.Toggles[n]then l.BackgroundColor3=Rd;l.BackgroundTransparency=0;l.TextColor3=Color3.new(1,1,1)else l.BackgroundColor3=Color3.new(0,0,0);l.BackgroundTransparency=0.35;l.TextColor3=Color3.fromRGB(120,120,140)end end
 l.MouseEnter:Connect(function()if not S.Toggles[n]then l.TextColor3=Rd end;l.Text=" "..n.." - "..d end)l.MouseLeave:Connect(function()l.Text=" "..n;upL()end)
 l.MouseButton1Click:Connect(function()if not S.build then S.Toggles[n]=not S.Toggles[n];local s=pcall(cb);upL();logT(n,s);Sv()end end)UI.Btns[#UI.Btns+1]=l end
+local function addInputCmd(n,d,pk,pf)cO=cO+1;Cmds[n:lower()]={d=d,name=n}local l=Q("TextButton",Cl,{Name=n,Size=UDim2.new(1,0,0,18),BackgroundTransparency=0.35,Font=Enum.Font.Code,TextSize=10,TextXAlignment="Left",LayoutOrder=cO,Text=" "..n,TextColor3=Color3.fromRGB(120,120,140),BackgroundColor3=Color3.new(0,0,0),AutoButtonColor=false,BorderSizePixel=0})
+l.MouseEnter:Connect(function()l.TextColor3=Cy;l.Text=" "..n.." - "..d end)l.MouseLeave:Connect(function()l.Text=" "..n;l.TextColor3=Color3.fromRGB(120,120,140)end)
+l.MouseButton1Click:Connect(function()S.pendingCmd=pk;Ti.Text=pf.." ";Ti:CaptureFocus();logT("Enter number for "..n,nil,Cy)end)UI.Btns[#UI.Btns+1]=l end
 cO2=9000
 function createCustomBtn(cmdName, realName, code)
 cO2=cO2+1
@@ -90,6 +117,56 @@ local count=0 for _,block in ipairs(blocks)do if #string.gsub(block,"%s","")>0 t
 logT("Added "..count.." scripts from clipboard",true,Yl)
 end
 addCmd("Fly","Flight",function()S.fly=S.Toggles["Fly"]end)addCmd("Noclip","Walls",function()S.noclip=S.Toggles["Noclip"]end)addCmd("InfJump","Jump",function()S.infJ=S.Toggles["InfJump"]end)addCmd("Sawnick","Speed",function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.WalkSpeed=S.Toggles["Sawnick"]and 500 or 16 end end)addCmd("Jetpack","Fast Fly",function()S.fly=S.Toggles["Jetpack"];S.flySpd=100 end)addCmd("Orbit","Follow",function()S.orbit=S.Toggles["Orbit"]end)addCmd("TP","Teleport to Target",function()local t=Gt()[1];if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart")and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=t.Character.HumanoidRootPart.CFrame end end)addCmd("Fling","Fling",function()pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/K1LAS1K/Ultimate-Fling-GUI/main/flingscript.lua"))()end)end)addCmd("Nuke","Tgt Others",function()S.tgt="others";Tg.Text="TGT: OTHERS"end)addCmd("ESP","Highlight",function()S.esp=S.Toggles["ESP"];for _,p in pairs(Pl:GetPlayers())do if p.Character then if S.esp then if not p.Character:FindFirstChild("Highlight")then Instance.new("Highlight",p.Character)end else local h=p.Character:FindFirstChild("Highlight")if h then h:Destroy()end end end end end)addCmd("Ghoul","Ghost",function()S.ghoul=S.Toggles["Ghoul"];S.noclip=S.ghoul;if LP.Character then for _,v in pairs(LP.Character:GetDescendants())do if v:IsA("BasePart")then v.Transparency=S.ghoul and .5 or 0 end end end end)addCmd("Tank","HP",function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.MaxHealth=100000;LP.Character.Humanoid.Health=100000 end end)addCmd("Load Extras","Archive",function()pcall(function()loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/ultimatumpart2"))()end)end)
+addInputCmd("speed","Set Fly/Walk Speed","speed","speed")
+addInputCmd("jh","Set Jump Height","jh","jumpheight")
+addCmd("cock","Infinite Zoom + 3P",function()S.camUnlock=S.Toggles["cock"];pcall(function()if S.camUnlock then Cam.MaxZoomDistance=math.huge;Cam.MinZoomDistance=0;LP.CameraMaxZoomDistance=math.huge;LP.CameraMode=Enum.CameraMode.Classic;else Cam.MaxZoomDistance=128;Cam.MinZoomDistance=0.5;LP.CameraMaxZoomDistance=128;end end)end)
+local fcBound=false local fcN="TEF_".._sid
+local function bindFC()if fcBound then return end;pcall(function()RS:BindToRenderStep(fcN,Enum.RenderPriority.Camera.Value-1,function()
+if S.freeCam and not S.freeCamLocked then
+local skip=false pcall(function()if Ti:IsFocused()or MIdI:IsFocused()or TaskInput:IsFocused()then skip=true end end)
+local dlt=Vector2.new(0,0)if not skip then dlt=_md end _md=Vector2.new(0,0)
+local rx,ry=S.freeCamCFrame:ToEulerAnglesXYZ();ry=ry-dlt.X*0.004;rx=math.clamp(rx-dlt.Y*0.004,-1.48,1.48)
+S.freeCamCFrame=CFrame.Angles(rx,ry,0)*CFrame.new(S.freeCamCFrame.Position)
+local dir=Vector3.new(0,0,0)
+if UIS:IsKeyDown(Enum.KeyCode.W)then dir=dir+S.freeCamCFrame.LookVector end
+if UIS:IsKeyDown(Enum.KeyCode.S)then dir=dir-S.freeCamCFrame.LookVector end
+if UIS:IsKeyDown(Enum.KeyCode.A)then dir=dir-S.freeCamCFrame.RightVector end
+if UIS:IsKeyDown(Enum.KeyCode.D)then dir=dir+S.freeCamCFrame.RightVector end
+if UIS:IsKeyDown(Enum.KeyCode.Space)then dir=dir+Vector3.new(0,1,0)end
+if UIS:IsKeyDown(Enum.KeyCode.LeftShift)then dir=dir-Vector3.new(0,1,0)end
+if dir.Magnitude>0 then S.freeCamCFrame=S.freeCamCFrame+dir.Unit*S.freeCamSpeed end
+Cam.CFrame=S.freeCamCFrame
+end
+end);fcBound=true end)end
+local function unbindFC()pcall(function()RS:UnbindFromRenderStep(fcN)end);fcBound=false;pcall(function()if LP.Character then Cam.CameraSubject=LP.Character:FindFirstChildOfClass("Humanoid")end end)end
+local function destroyFCBar()if FCBar then FCBar:Destroy();FCBar=nil end;S.freeCamClickTP=false;S.freeCamLocked=true;unbindFC()end
+local function createFCBar()
+destroyFCBar();S.freeCamLocked=false;S.freeCamCFrame=Cam.CFrame;pcall(function()Cam.CameraSubject=nil end);bindFC()
+FCBar=Q("Frame",G,{Size=UDim2.new(0,306,0,26),Position=UDim2.new(0.5,-153,0,80),BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=0.18,BorderSizePixel=0,ZIndex=200})
+Q("UIStroke",FCBar,{Color=Rd,Thickness=1,Transparency=0.3})Q("UICorner",FCBar,{CornerRadius=UDim.new(0,5)})
+local lB=Q("TextButton",FCBar,{Size=UDim2.new(0,58,0,20),Position=UDim2.new(0,4,0.5,-10),BackgroundTransparency=0.15,BackgroundColor3=Color3.new(0,0,0),Text="LOCK",TextColor3=Color3.fromRGB(120,120,140),Font=Enum.Font.Code,TextSize=9,BorderSizePixel=0,ZIndex=201,AutoButtonColor=false})
+Q("UICorner",lB,{CornerRadius=UDim.new(0,3)})
+local uB=Q("TextButton",FCBar,{Size=UDim2.new(0,68,0,20),Position=UDim2.new(0,66,0.5,-10),BackgroundTransparency=0.15,BackgroundColor3=Color3.new(0,0,0),Text="UNLOCK",TextColor3=Cy,Font=Enum.Font.Code,TextSize=9,BorderSizePixel=0,ZIndex=201,AutoButtonColor=false})
+Q("UICorner",uB,{CornerRadius=UDim.new(0,3)})
+local cB=Q("TextButton",FCBar,{Size=UDim2.new(0,106,0,20),Position=UDim2.new(0,138,0.5,-10),BackgroundTransparency=0.15,BackgroundColor3=Color3.new(0,0,0),Text="CLICK TP: OFF",TextColor3=Color3.fromRGB(120,120,140),Font=Enum.Font.Code,TextSize=9,BorderSizePixel=0,ZIndex=201,AutoButtonColor=false})
+Q("UICorner",cB,{CornerRadius=UDim.new(0,3)})
+local eB=Q("TextButton",FCBar,{Size=UDim2.new(0,58,0,20),Position=UDim2.new(0,248,0.5,-10),BackgroundTransparency=0.15,BackgroundColor3=Color3.new(0,0,0),Text="EXIT",TextColor3=Rd,Font=Enum.Font.Code,TextSize=9,BorderSizePixel=0,ZIndex=201,AutoButtonColor=false})
+Q("UICorner",eB,{CornerRadius=UDim.new(0,3)})
+local spL=Q("TextLabel",FCBar,{Size=UDim2.new(0,36,0,20),Position=UDim2.new(1,-40,0.5,-10),BackgroundTransparency=1,Text="2",TextColor3=Color3.fromRGB(80,80,100),Font=Enum.Font.Code,TextSize=8,ZIndex=201,TextXAlignment="Right"})
+local function upSt()
+lB.TextColor3=S.freeCamLocked and Gr or Color3.fromRGB(120,120,140)
+uB.TextColor3=S.freeCamLocked and Color3.fromRGB(120,120,140) or Cy
+cB.Text="CLICK TP: "..(S.freeCamClickTP and "ON" or "OFF")
+cB.TextColor3=S.freeCamClickTP and Yl or Color3.fromRGB(120,120,140)
+spL.Text=tostring(S.freeCamSpeed)
+end
+lB.MouseButton1Click:Connect(function()S.freeCamLocked=true;unbindFC();upSt();logT("Camera locked to character",true,Gr)end)
+uB.MouseButton1Click:Connect(function()S.freeCamLocked=false;S.freeCamCFrame=Cam.CFrame;pcall(function()Cam.CameraSubject=nil end);bindFC();upSt();logT("Camera unlocked — WASD+Mouse",true,Cy)end)
+cB.MouseButton1Click:Connect(function()S.freeCamClickTP=not S.freeCamClickTP;upSt();logT("Click TP: "..(S.freeCamClickTP and "ON" or "OFF"),nil,S.freeCamClickTP and Yl or Color3.fromRGB(120,120,140))end)
+eB.MouseButton1Click:Connect(function()S.freeCam=false;S.Toggles["fcam"]=false;destroyFCBar();for _,b in pairs(UI.Btns)do if b.Name=="fcam"then b.BackgroundColor3=Color3.new(0,0,0);b.BackgroundTransparency=0.35;b.TextColor3=Color3.fromRGB(120,120,140)end end;logT("fcam OFF",nil,Color3.fromRGB(120,120,140))end)
+upSt()
+end
+addCmd("fcam","Free Camera",function()S.freeCam=S.Toggles["fcam"];if S.freeCam then createFCBar();logT("fcam ON — WASD move, Mouse look, Scroll speed",true,Cy);else destroyFCBar();logT("fcam OFF",nil,Color3.fromRGB(120,120,140))end end)
 Bt.MouseButton1Click:Connect(function()S.build=not S.build;Bt.TextColor3=S.build and Yl or Color3.fromRGB(100,100,120);if S.build then logT("Build ON - Triple-tap custom cmds to delete",nil,Yl)else logT("Build OFF",nil);for k,_ in pairs(TT)do TT[k]={t={}}end end end)
 function Proc(i)
 local c=string.lower(string.gsub(i,"%s+"," "):match("^%s*(.-)%s*$"))if not c or c==""then return end
@@ -97,11 +174,18 @@ if S.tpPicker then
 if tonumber(c)then
 local idx=tonumber(c)if S.tpPicker[idx]then local t=S.tpPicker[idx];S.tgt=t.Name:lower();Tg.Text="TGT: "..S.tgt:upper();if t.Character and t.Character:FindFirstChild("HumanoidRootPart")and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=t.Character.HumanoidRootPart.CFrame;logT("TP to "..t.Name,true,Gr)end else logT("Invalid number.",false)end S.tpPicker=nil;return
 else S.tpPicker=nil;logT("TP Picker cancelled.",nil,Color3.fromRGB(100,100,120))end end
+if S.pendingCmd and tonumber(c)then
+local v=tonumber(c)
+if S.pendingCmd=="speed"then S.flySpd=v;logT("Speed: "..S.flySpd,true);S.pendingCmd=nil;return
+elseif S.pendingCmd=="jh"then pcall(function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.JumpPower=v;LP.Character.Humanoid.UseJumpPower=true end end);logT("JumpHeight: "..v,true);S.pendingCmd=nil;return end
+end
+S.pendingCmd=nil
 local a={};for w in c:gmatch("%S+")do table.insert(a,w)end local m=a[1]
-if m=="help"then logT("help/clear/target/spd/status/exit/run/tp",nil,Yl)
+if m=="help"then logT("help/clear/target/speed/jh/cock/fcam/status/exit/run/tp",nil,Yl)
 elseif m=="clear"or m=="cls"then clearT();logT("Cleared.",true)
 elseif m=="target"then S.tgt=a[2]or"s";Tg.Text="TGT: "..S.tgt:upper();logT("Target: "..S.tgt,true)
-elseif m=="speed"then S.flySpd=tonumber(a[2])or 50;logT("Speed: "..S.flySpd,true)
+elseif m=="speed"then if a[2]and tonumber(a[2])then S.flySpd=tonumber(a[2]);logT("Speed: "..S.flySpd,true)else S.pendingCmd="speed";Ti.Text="speed ";Ti:CaptureFocus();logT("Enter number for speed",nil,Cy)end
+elseif m=="jumpheight"or m=="jh"then if a[2]and tonumber(a[2])then local v=tonumber(a[2]);pcall(function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid.JumpPower=v;LP.Character.Humanoid.UseJumpPower=true end end);logT("JumpHeight: "..v,true)else S.pendingCmd="jh";Ti.Text="jumpheight ";Ti:CaptureFocus();logT("Enter number for jumpheight",nil,Cy)end
 elseif m=="exec"then local e=a[2]if e and Cmds[e]then if Cmds[e].code then local s=pcall(function()loadstring(Cmds[e].code)()end);logT("Exec: "..e,s)else local cmdName=Cmds[e].name or e;S.Toggles[cmdName]=not S.Toggles[cmdName];local s=pcall(Cmds[e].cb);for _,b in pairs(UI.Btns)do if b.Name==cmdName then if S.Toggles[cmdName]then b.BackgroundColor3=Rd;b.BackgroundTransparency=0;b.TextColor3=Color3.new(1,1,1)else b.BackgroundColor3=Color3.new(0,0,0);b.BackgroundTransparency=0.35;b.TextColor3=Color3.fromRGB(120,120,140)end end end;logT("Exec: "..e,s)end else logT("Unknown: "..tostring(e),false)end
 elseif m=="status"then logT("-- ACTIVE --",nil,Rd);local any=false for n,s in pairs(S.Toggles)do if s then logT("[ON] "..n,nil,Gr);any=true end end if not any then logT("None",nil,Color3.fromRGB(100,100,120))end
 elseif m=="exit"then M.Visible=false
@@ -121,3 +205,32 @@ Ti.InputBegan:Connect(function(i)if i.KeyCode==Enum.KeyCode.Up then if S.hIdx>1 
 RS.Stepped:Connect(function()pcall(function()if LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then if S.noclip then for _,v in pairs(LP.Character:GetDescendants())do if v:IsA("BasePart")then v.CanCollide=false end end end if S.fly then LP.Character.HumanoidRootPart.Velocity=Cam.CFrame.LookVector*S.flySpd end if S.orbit then local t=Gt()[1];if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart")then LP.Character.HumanoidRootPart.CFrame=t.Character.HumanoidRootPart.CFrame*CFrame.new(0,0,5)end end end end)end)
 UIS.JumpRequest:Connect(function()if S.infJ then pcall(function()if LP.Character and LP.Character:FindFirstChild("Humanoid")then LP.Character.Humanoid:ChangeState("Jumping")end end)end end)
 Pl.PlayerAdded:Connect(function(p)p.CharacterAdded:Connect(function(c)if S.esp then task.wait(1);if not c:FindFirstChild("Highlight")then Instance.new("Highlight",c)end end end)end)
+UIS.InputBegan:Connect(function(input,gpe)
+if gpe then return end
+if S.freeCam and S.freeCamClickTP and input.UserInputType==Enum.UserInputType.MouseButton1 then
+local pos=UIS:GetMouseLocation()
+local objs=game:GetService("GuiService"):GetGuiObjectsAtPosition(pos.X,pos.Y)
+local blocked=false
+for _,o in pairs(objs)do if o:IsA("TextButton")or o:IsA("TextBox")or o:IsA("ImageButton")then blocked=true;break end end
+if not blocked then
+pcall(function()
+local ray=Cam:ScreenPointToRay(pos.X,pos.Y)
+local p=RaycastParams.new()
+if LP.Character then p.FilterDescendantsInstances={LP.Character}end
+p.FilterType=Enum.RaycastFilterType.Exclude
+local r=workspace:Raycast(ray.Origin,ray.Direction*1000,p)
+if r and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")then
+LP.Character.HumanoidRootPart.CFrame=CFrame.new(r.Position+Vector3.new(0,3,0))
+logT("Teleported to click position",true,Cy)
+end
+end)
+end
+end
+end)
+UIS.InputChanged:Connect(function(i,g)
+if not g and i.UserInputType==Enum.UserInputType.MouseWheel and S.freeCam and not S.freeCamLocked then
+S.freeCamSpeed=math.clamp(S.freeCamSpeed+(i.Position.Z>0 and 1 or -1),1,50)
+if FCBar then local sp=FCBar:FindFirstChildWhichIsA("TextLabel")if sp then sp.Text=tostring(S.freeCamSpeed)end end
+end
+end)
+end)()
