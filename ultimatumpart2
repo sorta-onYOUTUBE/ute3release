@@ -28,7 +28,7 @@ local PS={["1"]="https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/r
 for i=1,5 do add("P"..i,function()loadstring(game:HttpGet(PS[tostring(i)]))()end)end
 add("Invisible",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/Mohamedguguu/invisible-V1-BY-MU/refs/heads/main/Maincode",true))()end)
 add("Admin",function()loadstring(game:HttpGet("https://gist.github.com/someunknowndude/38cecea5be9d75cb743eac8b1eaf6758/raw"))()end)
-add("InfYield",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()end)
+add("InfYield",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/DarkNetworks/Infinite-Yield/refs/heads/main/latest.lua"))()end)
 add("Dex",function()loadstring(game:HttpGet("https://obj.wearedevs.net/2/scripts/Dex%20Explorer.lua"))()end)
 add("Spy",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/78n/SimpleSpy/main/SimpleSpyBeta.lua"))()end)
 add("Master",function()loadstring(game:HttpGet("https://raw.githubusercontent.com/exxtremestuffs/SimpleSpyV2/master/simple-spy-v3.lua"))()end)
