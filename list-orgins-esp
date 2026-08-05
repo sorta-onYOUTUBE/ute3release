@@ -1,0 +1,483 @@
+--[[
+    ORGINS ESP — Sleek Black UI & Inventory Check
+--]]
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- State
+local espEnabled = false
+local seeThroughEnabled = false
+local invCheckEnabled = false
+local transparencyBackup = {}
+local descendantConn = nil
+local renderConn = nil
+local tracers = {}
+local distCache = {}
+
+---------------------------------------------------------------------------
+-- Team color resolver (Yellow if no team)
+---------------------------------------------------------------------------
+local function getTeamColor(player)
+    local myTeam = LocalPlayer.Team
+    local theirTeam = player.Team
+    if not theirTeam or not myTeam then return Color3.fromRGB(255, 230, 0) end -- Pure Yellow
+    if myTeam == theirTeam then return Color3.fromRGB(0, 255, 100) end     -- Green
+    if theirTeam.TeamColor then return theirTeam.TeamColor.Color end       -- Enemy Team Color
+    return Color3.fromRGB(255, 60, 60) -- Fallback Red
+end
+
+---------------------------------------------------------------------------
+-- Studs distance (Memory Cache)
+---------------------------------------------------------------------------
+local function getStuds(character)
+    local myChar = LocalPlayer.Character
+    if not myChar or not character then return nil end
+    local myPos = myChar:FindFirstChild("HumanoidRootPart")
+    if not myPos or not myPos:IsA("BasePart") then
+        local s, p = pcall(function() return myChar:GetPivot().Position end)
+        if not s or not p or p.Magnitude < 1 then return nil end
+        myPos = {Position = p}
+    end
+    local theirPos = character:FindFirstChild("HumanoidRootPart")
+    if not theirPos or not theirPos:IsA("BasePart") then
+        local s, p = pcall(function() return character:GetPivot().Position end)
+        if not s or not p or p.Magnitude < 1 then return nil end
+        theirPos = {Position = p}
+    end
+    local dist = math.floor((myPos.Position - theirPos.Position).Magnitude)
+    if dist == 0 then return nil end
+    return dist
+end
+
+---------------------------------------------------------------------------
+-- Inventory String Builder
+---------------------------------------------------------------------------
+local function getInventoryString(player)
+    local items = {}
+    if player.Character then
+        for _, item in ipairs(player.Character:GetChildren()) do
+            if item:IsA("Tool") then table.insert(items, item.Name) end
+        end
+    end
+    if player.Backpack then
+        for _, item in ipairs(player.Backpack:GetChildren()) do
+            if item:IsA("Tool") then table.insert(items, item.Name) end
+        end
+    end
+    if #items == 0 then return nil end
+    local str = table.concat(items, ", ")
+    -- Truncate if too long to prevent UI breaking
+    if #str > 50 then str = string.sub(str, 1, 50) .. "..." end
+    return str
+end
+
+---------------------------------------------------------------------------
+-- Build Toolbar GUI (Pure Black, Code Font, White Accent)
+---------------------------------------------------------------------------
+local gui = Instance.new("ScreenGui")
+gui.Name = "ORGINS_ESP_Toolbar"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.DisplayOrder = 999
+gui.Parent = CoreGui
+
+local bar = Instance.new("Frame")
+bar.Name = "Bar"
+bar.Size = UDim2.new(0, 310, 0, 34) -- Smaller
+bar.Position = UDim2.new(0.5, -155, 1, -42)
+bar.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Pure Black
+bar.BackgroundTransparency = 0
+bar.BorderSizePixel = 0
+bar.Parent = gui
+
+Instance.new("UICorner", bar).CornerRadius = UDim.new(0, 6)
+local barStroke = Instance.new("UIStroke", bar)
+barStroke.Color = Color3.fromRGB(255, 255, 255) -- White Accent
+barStroke.Thickness = 1
+
+-- Dragging
+local dragging, dragStart, startPos
+bar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = bar.Position
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then dragging = false end
+        end)
+    end
+end)
+bar.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        bar.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+local title = Instance.new("TextLabel", bar)
+title.Size = UDim2.new(0, 80, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "ORGINS"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 11
+title.Font = Enum.Font.Code
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+local function makeBtn(name, label, posX)
+    local btn = Instance.new("TextButton", bar)
+    btn.Name = name
+    btn.Size = UDim2.new(0, #label * 6.5 + 16, 0, 24) -- Smaller buttons
+    btn.Position = UDim2.new(0, posX, 0.5, -12)
+    btn.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Pure Black
+    btn.BorderSizePixel = 0
+    btn.Text = label
+    btn.TextColor3 = Color3.fromRGB(100, 100, 100) -- Dark grey when off
+    btn.TextSize = 10
+    btn.Font = Enum.Font.Code
+    btn.AutoButtonColor = false
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    local s = Instance.new("UIStroke", btn)
+    s.Color = Color3.fromRGB(40, 40, 40) -- Dark stroke when off
+    s.Thickness = 1
+    return btn
+end
+
+local espBtn = makeBtn("ESP", "ESP: OFF", 85)
+local stBtn = makeBtn("ST", "SeeThru: OFF", 155)
+local invBtn = makeBtn("Inv", "Inv: OFF", 248)
+
+---------------------------------------------------------------------------
+-- ESP: Create boxes + text + tracer
+---------------------------------------------------------------------------
+local function createForPlayer(player)
+    if player == LocalPlayer then return end
+    local char = player.Character
+    if not char then return end
+
+    if char:FindFirstChild("OESP_Done") then return end
+    local marker = Instance.new("BoolValue")
+    marker.Name = "OESP_Done"
+    marker.Parent = char
+
+    local color = getTeamColor(player)
+
+    for _, desc in ipairs(char:GetDescendants()) do
+        if desc:IsA("BasePart") and desc.Size.Magnitude >= 0.5 then
+            local box = Instance.new("BoxHandleAdornment")
+            box.Name = "OESP_Box"
+            box.Adornee = desc
+            box.Size = desc.Size + Vector3.new(0.06, 0.06, 0.06)
+            box.Color3 = color
+            box.Transparency = 0.45
+            box.AlwaysOnTop = true
+            box.ZIndex = 10
+            box.Visible = true
+            box.Parent = desc
+        end
+    end
+
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        local bb = Instance.new("BillboardGui")
+        bb.Name = "OESP_BB_" .. player.UserId
+        bb.Adornee = root
+        bb.Size = UDim2.new(0, 180, 0, 80) -- Taller to fit inventory
+        bb.StudsOffset = Vector3.new(0, 4, 0)
+        bb.AlwaysOnTop = true
+        bb.Parent = gui
+
+        local function lbl(name, text, y, col, sz)
+            local t = Instance.new("TextLabel", bb)
+            t.Name = name
+            t.Size = UDim2.new(1, 0, 0, 13)
+            t.Position = UDim2.new(0, 0, 0, y)
+            t.BackgroundTransparency = 1
+            t.Text = text
+            t.TextColor3 = col
+            t.TextSize = sz
+            t.Font = Enum.Font.Code -- Code font for info too
+            t.TextXAlignment = Enum.TextXAlignment.Center
+            t.TextStrokeTransparency = 0.5
+            t.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            t.Visible = true
+            return t
+        end
+
+        lbl("Name", player.DisplayName, 0, color, 11)
+        lbl("Dist", "0 studs", 12, Color3.fromRGB(200, 200, 200), 10)
+        lbl("Health", "100 HP", 24, Color3.fromRGB(100, 255, 100), 10)
+        
+        local teamL = lbl("Team", player.Team and player.Team.Name or "", 36, color, 10)
+        teamL.Visible = (player.Team ~= nil) -- Hide initially if no team
+
+        lbl("Inv", "", 48, Color3.fromRGB(180, 180, 255), 9).Visible = false -- Hidden until toggled
+    end
+
+    if not tracers[player] then
+        local success, tracer = pcall(function()
+            local t = Drawing.new("Line")
+            t.Thickness = 1
+            t.Transparency = 0.5
+            t.Color = color
+            t.Visible = true
+            return t
+        end)
+        if success and tracer then tracers[player] = tracer end
+    end
+end
+
+---------------------------------------------------------------------------
+-- ESP: Cleanup
+---------------------------------------------------------------------------
+local function removeForCharacter(char, player)
+    if not char then return end
+    local marker = char:FindFirstChild("OESP_Done")
+    if marker then marker:Destroy() end
+    for _, box in ipairs(char:GetDescendants()) do
+        if box.Name == "OESP_Box" and box:IsA("BoxHandleAdornment") then box:Destroy() end
+    end
+    local bb = gui:FindFirstChild("OESP_BB_" .. player.UserId)
+    if bb then bb:Destroy() end
+end
+
+local function removeAllESP()
+    for _, player in ipairs(Players:GetPlayers()) do
+        removeForCharacter(player.Character, player)
+        if tracers[player] then pcall(function() tracers[player]:Remove() end) tracers[player] = nil end
+    end
+    distCache = {}
+end
+
+---------------------------------------------------------------------------
+-- ESP: RenderStepped loop
+---------------------------------------------------------------------------
+local function startRenderLoop()
+    if renderConn then return end
+    renderConn = RunService.RenderStepped:Connect(function()
+        if not espEnabled then
+            if renderConn then renderConn:Disconnect() renderConn = nil end
+            return
+        end
+        
+        local myChar = LocalPlayer.Character
+        local myRoot = myChar and (myChar:FindFirstChild("HumanoidRootPart") or myChar:FindFirstChild("Torso"))
+        local myScreenPos = nil
+        if myRoot then
+            local s, p = pcall(function() return Camera:WorldToViewportPoint(myRoot.Position) end)
+            if s then myScreenPos = p end
+        end
+
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("OESP_Done") then
+                local color = getTeamColor(player)
+                local char = player.Character
+
+                for _, box in ipairs(char:GetDescendants()) do
+                    if box:IsA("BoxHandleAdornment") and box.Name == "OESP_Box" then box.Color3 = color end
+                end
+
+                local bb = gui:FindFirstChild("OESP_BB_" .. player.UserId)
+                if bb then
+                    local root = char:FindFirstChild("HumanoidRootPart")
+                    if root then bb.Adornee = root end
+
+                    local nameL = bb:FindFirstChild("Name")
+                    local distL = bb:FindFirstChild("Dist")
+                    local healthL = bb:FindFirstChild("Health")
+                    local teamL = bb:FindFirstChild("Team")
+                    local invL = bb:FindFirstChild("Inv")
+
+                    if nameL then nameL.Text = player.DisplayName; nameL.TextColor3 = color end
+                    
+                    local dist = getStuds(char)
+                    if dist and dist > 0 then distCache[player] = dist end
+                    if distL then distL.Text = (distCache[player] or 0) .. " studs" end
+
+                    if healthL then
+                        local hum = char:FindFirstChildOfClass("Humanoid")
+                        if hum then
+                            local hp = math.floor(hum.Health)
+                            healthL.Text = hp .. " HP"
+                            if hp > 60 then healthL.TextColor3 = Color3.fromRGB(100, 255, 100)
+                            elseif hp > 30 then healthL.TextColor3 = Color3.fromRGB(255, 200, 80)
+                            else healthL.TextColor3 = Color3.fromRGB(255, 80, 80) end
+                        end
+                    end
+                    
+                    if teamL then
+                        if player.Team then
+                            teamL.Text = player.Team.Name
+                            teamL.TextColor3 = color
+                            teamL.Visible = true
+                        else
+                            teamL.Visible = false
+                        end
+                    end
+
+                    -- Inventory Logic
+                    if invL then
+                        if invCheckEnabled then
+                            local invStr = getInventoryString(player)
+                            if invStr then
+                                invL.Text = invStr
+                                invL.Visible = true
+                            else
+                                invL.Visible = false
+                            end
+                        else
+                            invL.Visible = false
+                        end
+                    end
+                end
+
+                -- Tracers
+                if tracers[player] and myScreenPos then
+                    local theirRoot = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso")
+                    if theirRoot then
+                        local s, theirScreenPos = pcall(function() return Camera:WorldToViewportPoint(theirRoot.Position) end)
+                        if s and theirScreenPos.Z > 0 then
+                            tracers[player].From = Vector2.new(myScreenPos.X, myScreenPos.Y)
+                            tracers[player].To = Vector2.new(theirScreenPos.X, theirScreenPos.Y)
+                            tracers[player].Color = color
+                            tracers[player].Visible = true
+                        else
+                            tracers[player].Visible = false
+                        end
+                    else
+                        tracers[player].Visible = false
+                    end
+                elseif tracers[player] then
+                    tracers[player].Visible = false
+                end
+            end
+        end
+    end)
+end
+
+---------------------------------------------------------------------------
+-- ESP Enable / Disable
+---------------------------------------------------------------------------
+local function enableESP()
+    espEnabled = true
+    for _, player in ipairs(Players:GetPlayers()) do createForPlayer(player) end
+    startRenderLoop()
+end
+
+local function disableESP()
+    espEnabled = false
+    if renderConn then renderConn:Disconnect() renderConn = nil end
+    removeAllESP()
+end
+
+---------------------------------------------------------------------------
+-- See-Through
+---------------------------------------------------------------------------
+local function seeThroughOn()
+    seeThroughEnabled = true
+    transparencyBackup = {}
+    local function apply(obj)
+        if (obj:IsA("BasePart") or obj:IsA("Decal") or obj:IsA("Texture")) then
+            if obj.Transparency < 0.5 then
+                transparencyBackup[obj] = obj.Transparency
+                obj.Transparency = 0.5
+            end
+        end
+    end
+    for _, obj in ipairs(workspace:GetDescendants()) do apply(obj) end
+    if descendantConn then descendantConn:Disconnect() end
+    descendantConn = workspace.DescendantAdded:Connect(function(obj)
+        if not seeThroughEnabled then return end
+        task.wait()
+        apply(obj)
+    end)
+end
+
+local function seeThroughOff()
+    seeThroughEnabled = false
+    if descendantConn then descendantConn:Disconnect() descendantConn = nil end
+    for obj, orig in pairs(transparencyBackup) do
+        if obj and obj.Parent then pcall(function() obj.Transparency = orig end) end
+    end
+    transparencyBackup = {}
+end
+
+---------------------------------------------------------------------------
+-- Button Logic (Monochrome White Style)
+---------------------------------------------------------------------------
+local function styleBtn(btn, on)
+    if on then
+        btn.Text = btn.Text:gsub(": OFF$", ": ON")
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+        for _, c in ipairs(btn:GetChildren()) do
+            if c:IsA("UIStroke") then c.Color = Color3.fromRGB(255, 255, 255) end -- White stroke
+        end
+    else
+        btn.Text = btn.Text:gsub(": ON$", ": OFF")
+        btn.TextColor3 = Color3.fromRGB(100, 100, 100) -- Dark grey text
+        for _, c in ipairs(btn:GetChildren()) do
+            if c:IsA("UIStroke") then c.Color = Color3.fromRGB(40, 40, 40) end -- Dark stroke
+        end
+    end
+end
+
+espBtn.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    if espEnabled then enableESP() else disableESP() end
+    styleBtn(espBtn, espEnabled)
+end)
+
+stBtn.MouseButton1Click:Connect(function()
+    seeThroughEnabled = not seeThroughEnabled
+    if seeThroughEnabled then seeThroughOn() else seeThroughOff() end
+    styleBtn(stBtn, seeThroughEnabled)
+end)
+
+invBtn.MouseButton1Click:Connect(function()
+    invCheckEnabled = not invCheckEnabled
+    styleBtn(invBtn, invCheckEnabled)
+end)
+
+---------------------------------------------------------------------------
+-- Player Connections
+---------------------------------------------------------------------------
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterRemoving:Connect(function(oldChar) removeForCharacter(oldChar, player) end)
+    player.CharacterAdded:Connect(function(char)
+        task.wait(1.2)
+        if espEnabled then createForPlayer(player) end
+    end)
+    task.wait(1)
+    if espEnabled then createForPlayer(player) end
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    removeForCharacter(player.Character, player)
+    if tracers[player] then pcall(function() tracers[player]:Remove() end) tracers[player] = nil end
+    distCache[player] = nil
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        player.CharacterRemoving:Connect(function(oldChar) removeForCharacter(oldChar, player) end)
+        player.CharacterAdded:Connect(function(char)
+            task.wait(1.2)
+            if espEnabled then createForPlayer(player) end
+        end)
+        if player.Character and espEnabled then
+            task.wait(0.5)
+            createForPlayer(player)
+        end
+    end
+end
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(2)
+    if espEnabled then disableESP() enableESP() end
+    if not gui.Parent then gui.Parent = CoreGui end
+end)
