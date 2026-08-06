@@ -26,6 +26,8 @@ YETTA ORGINS ALPHA - planned release August 14 to October 29 to December 25 (dev
 Our secure, new, innovative branch, an advanced targeting system, You can also do this; "tp Niko" and boom, you teleported. In older GEN 2, and HYBRID versions, you had to say "target Niko" and then "tp". It will feature the new and advanced ORGINS ESP, that overpowers the old ESP. It also has a music player:> and it has more advanced shit than Neptune but less commands of course.
 ORGINS ESP for YETTA ORGINS ALPHA- August 5
 The most powerful ESP ever. It can check the player's name, studs away, hitbox, health, and even their inventory. and it even has a feature where a line spans across you and a player, which is OP in my experience. since all the other ESP, if they don't have this, You can know where they are but the question is, how far are they and are they behind a wall, And also one thing that strengthens this, It can also set every object to 0.5 Transparency which allows you to see everything.
+ORGINS ESP
+A reliable invisible script.
 
 - The creator of this script
   9k9w (follow usernamedumb23 on Facebook)
