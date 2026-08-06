@@ -11,6 +11,8 @@ pcall(function()if hookfunction and isfile then local _o=isfile hookfunction(isf
 pcall(function()if hookfunction and listfiles then local _o=listfiles hookfunction(listfiles,function(p)local f={};for _,v in ipairs(_o(p))do if not(v:lower():find("executor")or v:lower():find("exploit")or v:lower():find("inject"))then f[#f+1]=v end end return f end)end end)
 -- ═══════════════════════════════════════════════════════════
 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-orgins-inv'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-orgins-esp'))()
 UIS,RS,Pl,H,LP,Cam=game:GetService("UserInputService"),game:GetService("RunService"),game:GetService("Players"),game:GetService("HttpService"),game:GetService("Players").LocalPlayer,workspace.CurrentCamera
 for _,g in pairs(game.CoreGui:GetChildren())do if g.Name:find("TE_GEN3")or g.Name:find("TE_EXTRAS")then g:Destroy()end end
 local oldNC
@@ -46,7 +48,7 @@ HomeP=Q("Frame",M,{Size=UDim2.new(1,-4,1,-39),Position=UDim2.new(0,2,0,35),Backg
 Q("TextLabel",HomeP,{Size=UDim2.new(1,-20,0,30),Position=UDim2.new(0,10,0,10),BackgroundTransparency=1,Text="WELCOME, "..LP.Name,TextColor3=Rd,TextStrokeColor3=DRd,TextStrokeTransparency=.5,Font=Enum.Font.GothamBold,TextSize=22,TextXAlignment="Left"})
 Q("Frame",HomeP,{Size=UDim2.new(1,-20,0,1),Position=UDim2.new(0,10,0,42),BackgroundColor3=Rd,BackgroundTransparency=0.5,BorderSizePixel=0})
 Q("TextLabel",HomeP,{Size=UDim2.new(1,-20,0,20),Position=UDim2.new(0,10,0,48),BackgroundTransparency=1,Text="HOW TO USE",TextColor3=DRd,Font=Enum.Font.GothamBold,TextSize=14,TextXAlignment="Left"})
-Q("TextLabel",HomeP,{Size=UDim2.new(1,-20,0,110),Position=UDim2.new(0,10,0,68),BackgroundTransparency=1,Text="[TERMINAL] Type commands like 'fly' or 'noclip'\n[RUN] Execute raw Lua code via lua_run\n   Example: run print(\"hello\")\n[COMMANDS] Click any command in the list to toggle\n[SMART TP] Type 'tp anna' to instantly find & teleport",TextColor3=Color3.fromRGB(180,180,180),Font=Enum.Font.Code,TextSize=11,TextXAlignment="Left",TextWrapped=true})
+Q("TextLabel",HomeP,{Size=UDim2.new(1,-20,0,110),Position=UDim2.new(0,10,0,68),BackgroundTransparency=1,Text="[ORGINS TOOLS] Try new ESP and INVISIBLE command'\n[RUN] Execute raw Lua code via lua_run\n   Example: run print(\"hello\")\n[COMMANDS] Click any command in the list to toggle\n[SMART TP] Type 'tp anna' to instantly find & teleport",TextColor3=Color3.fromRGB(180,180,180),Font=Enum.Font.Code,TextSize=11,TextXAlignment="Left",TextWrapped=true})
 Q("TextLabel",HomeP,{Size=UDim2.new(1,-20,0,45),Position=UDim2.new(0,10,1,-110),BackgroundTransparency=1,Text="CREDITS\nFacebook: usernamedumb23\nCreator's nickname: 9k9w",TextColor3=DRd,Font=Enum.Font.Code,TextSize=11,TextXAlignment="Center",TextWrapped=true})
 local MFrm=Q("Frame",HomeP,{Size=UDim2.new(1,0,0,60),Position=UDim2.new(0,0,1,-60),BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=0.35,BorderSizePixel=0})Q("UIStroke",MFrm,{Color=Color3.fromRGB(0,0,0),Thickness=1,Transparency=0.6})
 Q("TextLabel",MFrm,{Size=UDim2.new(0,50,1,0),BackgroundTransparency=1,Text="MUSIC",TextColor3=DRd,Font=Enum.Font.Code,TextSize=10,TextXAlignment="Left"})
