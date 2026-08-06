@@ -1,0 +1,200 @@
+-- ORGINS INV
+local Players, UIS, RunService = game:GetService("Players"), game:GetService("UserInputService"), game:GetService("RunService")
+local Player = Players.LocalPlayer
+local Gui = Instance.new("ScreenGui") Gui.Name, Gui.ResetOnSpawn, Gui.Parent = "ORGINS_INV", false, Player:WaitForChild("PlayerGui")
+
+-- Main Container (Dragged by TopBar)
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 540, 0, 80)
+Main.Position = UDim2.new(0.5, -270, 0, 10)
+Main.BackgroundColor3 = Color3.new(0, 0, 0)
+Main.BorderSizePixel = 0
+Main.Parent = Gui
+
+-- TOP BAR (Only Banner, Min, Exit go here)
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 30)
+TopBar.BackgroundColor3 = Color3.new(0.05, 0.05, 0.05)
+TopBar.BorderSizePixel = 0
+TopBar.Active = true -- Required for mobile dragging
+TopBar.Parent = Main
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 100, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "ORGINS INV"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.Code
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 30, 0, 20)
+MinBtn.Position = UDim2.new(1, -70, 0, 5)
+MinBtn.BackgroundColor3 = Color3.new(0.15, 0.15, 0.15)
+MinBtn.TextColor3 = Color3.new(1, 1, 1)
+MinBtn.Font = Enum.Font.Code
+MinBtn.TextSize = 14
+MinBtn.Text = "-"
+MinBtn.BorderSizePixel = 0
+MinBtn.Parent = TopBar
+
+local ExtBtn = Instance.new("TextButton")
+ExtBtn.Size = UDim2.new(0, 30, 0, 20)
+ExtBtn.Position = UDim2.new(1, -35, 0, 5)
+ExtBtn.BackgroundColor3 = Color3.new(0.4, 0.1, 0.1)
+ExtBtn.TextColor3 = Color3.new(1, 1, 1)
+ExtBtn.Font = Enum.Font.Code
+ExtBtn.TextSize = 14
+ExtBtn.Text = "X"
+ExtBtn.BorderSizePixel = 0
+ExtBtn.Parent = TopBar
+
+-- CONTENT FRAME (Feature buttons ONLY go here)
+local Content = Instance.new("Frame")
+Content.Size = UDim2.new(1, -10, 1, -35)
+Content.Position = UDim2.new(0, 5, 0, 35)
+Content.BackgroundTransparency = 1
+Content.Parent = Main
+
+-- Mobile/PC Dragging (Bound EXCLUSIVELY to TopBar)
+local dI, dS, sP = nil, nil, nil
+TopBar.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dS, sP = i.Position, Main.Position
+    end
+end)
+TopBar.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
+        dS = nil
+    end
+end)
+TopBar.InputChanged:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch then dI = i end
+end)
+UIS.InputChanged:Connect(function(i)
+    if i == dI and dS then
+        local d = i.Position - dS
+        Main.Position = UDim2.new(sP.X.Scale, sP.X.Offset + d.X, sP.Y.Scale, sP.Y.Offset + d.Y)
+    end
+end)
+
+-- Minimize Logic
+local isMin = false
+MinBtn.Activated:Connect(function()
+    isMin = not isMin
+    Content.Visible = not isMin
+    Main.Size = isMin and UDim2.new(0, 540, 0, 30) or UDim2.new(0, 540, 0, 80)
+end)
+
+-- Create Content Buttons Explicitly (Prevents parenting bugs)
+local function createContentButton(name, xPos)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(0, 82, 1, -4)
+    Btn.Position = UDim2.new(0, xPos, 0, 2)
+    Btn.BackgroundColor3 = Color3.new(0.05, 0.05, 0.05)
+    Btn.TextColor3 = Color3.new(1, 1, 1)
+    Btn.Font = Enum.Font.Code
+    Btn.TextSize = 11
+    Btn.Text = name
+    Btn.BorderSizePixel = 0
+    Btn.Parent = Content -- STRICTLY PARENTS TO CONTENT
+    return Btn
+end
+
+local bInv = createContentButton("INVIS: OFF", 0)
+local bNoc = createContentButton("NOCLIP: OFF", 86)
+local bBst = createContentButton("BOOST: OFF", 172)
+local bGho = createContentButton("GHOST: OFF", 258)
+local bAdd = createContentButton("+SPD", 344)
+local bSub = createContentButton("-SPD", 430)
+
+-- States & Variables
+local invis_on, noclip_on, boost_on, ghost_on = false, false, false, false
+local base_speed = 16
+local seatPos = Vector3.new(-25.95, 400, 3537.55)
+local connections = {}
+
+-- Speed Priority Logic
+local function updateSpeed()
+    local h = Player.Character and Player.Character:FindFirstChildOfClass("Humanoid")
+    if not h then return end
+    if ghost_on and invis_on then h.WalkSpeed = 40
+    elseif boost_on then h.WalkSpeed = 32
+    else h.WalkSpeed = base_speed end
+end
+
+-- Original Logic: Invisibility
+local function toggleInvis()
+    invis_on = not invis_on bInv.Text = "INVIS: " .. (invis_on and "ON" or "OFF")
+    local char = Player.Character if not char then return end
+    if invis_on then
+        for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then v.Transparency = 0.75 end end
+        local hr = char:FindFirstChild("HumanoidRootPart") if not hr then return end
+        local saved = hr.CFrame char:MoveTo(seatPos) task.wait()
+        
+        if not char:FindFirstChild("HumanoidRootPart") or char.HumanoidRootPart.Position.Y < -50 then
+            char:MoveTo(saved) invis_on = false bInv.Text = "INVIS: OFF"
+            for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 end end return
+        end
+        
+        local seat = Instance.new("Seat") seat.Parent, seat.Anchored, seat.CanCollide, seat.Transparency, seat.Position, seat.Name = workspace, false, false, 1, seatPos, "invischair"
+        local weld = Instance.new("Weld") weld.Part0, weld.Parent = seat, seat
+        local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+        if torso then weld.Part1 = torso task.wait() seat.CFrame = saved end
+    else
+        for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 end end
+        if workspace:FindFirstChild("invischair") then workspace.invischair:Destroy() end
+        if workspace:FindFirstChild("InvisBoxMethod2") then workspace.InvisBoxMethod2:Destroy() end
+        if ghost_on then ghost_on = false bGho.Text = "GHOST: OFF" updateSpeed() end
+    end
+end
+
+-- Safe Unload
+local function unload()
+    for _,c in pairs(connections) do if typeof(c) == "RBXScriptConnection" then c:Disconnect() end end
+    local char = Player.Character
+    if char then
+        for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 pcall(function() v.CanCollide = true end) end end
+        local h = char:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed = 16 end
+    end
+    if workspace:FindFirstChild("invischair") then workspace.invischair:Destroy() end
+    if workspace:FindFirstChild("InvisBoxMethod2") then workspace.InvisBoxMethod2:Destroy() end
+    Gui:Destroy()
+end
+
+-- Connect Buttons
+bInv.Activated:Connect(toggleInvis)
+bNoc.Activated:Connect(function() noclip_on = not noclip_on bNoc.Text = "NOCLIP: " .. (noclip_on and "ON" or "OFF") end)
+bBst.Activated:Connect(function() boost_on = not boost_on bBst.Text = "BOOST: " .. (boost_on and "ON" or "OFF") updateSpeed() end)
+bGho.Activated:Connect(function() ghost_on = not ghost_on bGho.Text = "GHOST: " .. (ghost_on and "ON" or "OFF") updateSpeed() end)
+bAdd.Activated:Connect(function() base_speed = math.clamp(base_speed + 5, 1, 200) updateSpeed() end)
+bSub.Activated:Connect(function() base_speed = math.clamp(base_speed - 5, 1, 200) updateSpeed() end)
+ExtBtn.Activated:Connect(unload)
+
+-- Heartbeat Loop (Noclip + Anti-Death)
+table.insert(connections, RunService.Heartbeat:Connect(function()
+    local char = Player.Character
+    if char then
+        if noclip_on then for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then pcall(function() v.CanCollide = false end) end end end
+        
+        -- Anti-Death: Forces max health ONLY while invisible
+        if invis_on then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health < hum.MaxHealth then
+                hum.Health = hum.MaxHealth
+            end
+        end
+    end
+end))
+
+-- Keybinds (Z, N, B, G)
+table.insert(connections, UIS.InputBegan:Connect(function(i, gp)
+    if gp then return end
+    if i.KeyCode == Enum.KeyCode.Z then toggleInvis()
+    elseif i.KeyCode == Enum.KeyCode.N then bNoc.Activated:Fire()
+    elseif i.KeyCode == Enum.KeyCode.B then bBst.Activated:Fire()
+    elseif i.KeyCode == Enum.KeyCode.G then bGho.Activated:Fire() end
+end))
