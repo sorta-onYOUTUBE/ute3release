@@ -1,5 +1,5 @@
-- Hello, 9k9w here (usernamedumb23 on Facebook), Here is the development logs for each TROLL EM GEN 1, GEN 2, GEN 2 HYBRID, GEN 3 YETTA (aka New Generation), Here are the support dates, Please read;
-GEN 1 (No Support on Release)
+- *Hello, 9k9w here (usernamedumb23 on Facebook), Here is the development logs for each TROLL EM GEN 1, GEN 2, GEN 2 HYBRID, GEN 3 YETTA (aka New Generation), Here are the support dates, Please read;*
+# ***GEN 1 (No Support on Release)***
 - 1.0 > March 1, 2026
 - 1.1 > March 1
 - 1.2 > March 2
@@ -18,7 +18,7 @@ GEN 1 (No Support on Release)
 - 6.0.1.1 BETAPATCH > July 12
 - 6.0.1.1 > July 12
 - There is kind of no point to update it, My support are patches to fix bugs and preserve the script hub.
-# ***GEN 2 HYBRID NEPTUNE**"
+# ***GEN 2 HYBRID NEPTUNE***
 # NEPTUNE 6.0.5 SRHe > planned release August 12 to October 27
 - Our traditional branch script, A traditional, simple script based on 6.0.1.1, with a fixed terminal, arbitrary Lua using the run command, and it features more commands than YETTA ORGINS, most are minor, but fun to use, enjoy it with a music player :> and a clean GUI just like 6.0.1.1.
 # ***GEN 3 YETTA***
