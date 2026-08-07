@@ -29,5 +29,5 @@
 # ORGINS INV > August 6, 2026
 - A reliable invisible script.
 
-- The creator of this script
-  9k9w (follow usernamedumb23 on Facebook)
+# *******The creator of this script*******
+# ***9k9w (follow usernamedumb23 on Facebook)***
