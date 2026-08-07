@@ -18,7 +18,7 @@ Tab:CreateButton({
     Callback = function()
         Rayfield:Notify({Title = "Loading...", Content = "Executing Legacy Interface", Duration = 3})
         Rayfield:Destroy() -- Closes loader
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-ute4legacygui"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.4.0-L.lua"))()
     end,
 })
 
@@ -30,7 +30,7 @@ Tab:CreateButton({
     Callback = function()
         Rayfield:Notify({Title = "Loading...", Content = "Executing Rayfield Interface", Duration = 3})
         Rayfield:Destroy() -- Closes loader
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-ute4rayfield"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.4.0-R.lua"))()
     end,
 })
 
