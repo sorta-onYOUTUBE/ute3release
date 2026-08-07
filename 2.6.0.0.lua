@@ -40,11 +40,11 @@ Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 -- Script Links
 local Scripts = {
-    [1] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-9k9wste1-2",
-    [2] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-ute2",
-    [3] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-ute3-01",
-    [4] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-ute4legacygui",
-    [5] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/sTE%205R"
+    [1] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.1.2.lua",
+    [2] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.2.0.0.0.lua",
+    [3] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.3.0.1.lua",
+    [4] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.4.0-X.lua",
+    [5] = "https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/1.5.0-R.lua"
 }
 
 -- Creating the 5 Purple Lines
