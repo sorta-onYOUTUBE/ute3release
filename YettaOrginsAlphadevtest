@@ -11,6 +11,7 @@ pcall(function()if hookfunction and isfile then local _o=isfile hookfunction(isf
 pcall(function()if hookfunction and listfiles then local _o=listfiles hookfunction(listfiles,function(p)local f={};for _,v in ipairs(_o(p))do if not(v:lower():find("executor")or v:lower():find("exploit")or v:lower():find("inject"))then f[#f+1]=v end end return f end)end end)
 -- ═══════════════════════════════════════════════════════════
 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-modifiedkilasikfling'))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-orgins-inv'))()
 loadstring(game:HttpGet('https://raw.githubusercontent.com/sorta-onYOUTUBE/ute3release/refs/heads/main/list-orgins-esp'))()
 UIS,RS,Pl,H,LP,Cam=game:GetService("UserInputService"),game:GetService("RunService"),game:GetService("Players"),game:GetService("HttpService"),game:GetService("Players").LocalPlayer,workspace.CurrentCamera
