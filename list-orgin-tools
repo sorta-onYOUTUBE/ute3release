@@ -1,74 +1,746 @@
---== ORGINS COMBINED [1/2] ==--
-local P,R,U,C=game:GetService"Players",game:GetService"RunService",game:GetService"UserInputService",workspace.CurrentCamera
-local LP=P.LocalPlayer
-local Th={B=Color3.fromRGB(30,30,30),A=Color3.fromRGB(0,100,0)}
-local ins=Instance.new
-local SG=ins("ScreenGui")SG.Name="OC"SG.ResetOnSpawn=false SG.ZIndexBehavior=Enum.ZIndexBehavior.Sibling SG.DisplayOrder=999 SG.Parent=game.CoreGui
-local MF=ins("Frame")MF.Size=UDim2.new(0,520,0,110)MF.Position=UDim2.new(0.5,-260,0,10)MF.BackgroundTransparency=1 MF.Active=true MF.Parent=SG
-local TB=ins("Frame")TB.Size=UDim2.new(1,0,0,25)TB.BackgroundColor3=Color3.fromRGB(0,0,0)TB.BorderSizePixel=0 TB.Parent=MF
-local Ti=ins("TextLabel")Ti.Size=UDim2.new(0,150,1,0)Ti.Position=UDim2.new(0,10,0,0)Ti.BackgroundTransparency=1 Ti.Text="ORGINS COMBINED"Ti.TextColor3=Color3.new(1,1,1)Ti.Font=Enum.Font.Code Ti.TextSize=14 Ti.TextXAlignment=Enum.TextXAlignment.Left Ti.Parent=TB
-local Mn=ins("TextButton")Mn.Size=UDim2.new(0,20,0,15)Mn.Position=UDim2.new(1,-50,0,5)Mn.BackgroundColor3=Color3.fromRGB(40,40,40)Mn.TextColor3=Color3.new(1,1,1)Mn.Font=Enum.Font.Code Mn.TextSize=14 Mn.Text="-"Mn.BorderSizePixel=0 Mn.Parent=TB
-local Ex=ins("TextButton")Ex.Size=UDim2.new(0,20,0,15)Ex.Position=UDim2.new(1,-25,0,5)Ex.BackgroundColor3=Color3.fromRGB(200,0,0)Ex.TextColor3=Color3.new(1,1,1)Ex.Font=Enum.Font.Code Ex.TextSize=14 Ex.Text="X"Ex.BorderSizePixel=0 Ex.Parent=TB
-local dg,ds,sp
-TB.InputBegan:Connect(function(q)if q.UserInputType==Enum.UserInputType.MouseButton1 or q.UserInputType==Enum.UserInputType.Touch then dg=true ds=q.Position sp=MF.Position q.Changed:Connect(function()if q.UserInputState==Enum.UserInputState.End then dg=false end end)end end)
-TB.InputChanged:Connect(function(q)if dg and(q.UserInputType==Enum.UserInputType.MouseMovement or q.UserInputType==Enum.UserInputType.Touch)then local d=q.Position-ds MF.Position=UDim2.new(sp.X.Scale,sp.X.Offset+d.X,sp.Y.Scale,sp.Y.Offset+d.Y)end end)
-local B={}
-local function mb(n,x,y,w,h,t)local b=ins("TextButton")b.Size=UDim2.new(0,w,0,h)b.Position=UDim2.new(0,x,0,y)b.BackgroundColor3=Th.B b.TextColor3=Color3.new(1,1,1)b.Font=Enum.Font.Code b.TextSize=10 b.Text=t b.BorderSizePixel=0 b.Parent=MF ins("UICorner",b).CornerRadius=UDim.new(0,3)B[n]=b return b end
-mb("ESP",5,5,80,22,"ESP: OFF")mb("ST",90,5,105,22,"SEE-THRU: OFF")mb("IC",200,5,70,22,"INV: OFF")
-mb("IV",5,30,80,22,"INVIS: OFF")mb("NC",90,30,90,22,"NOCLIP: OFF")mb("BT",185,30,80,22,"BOOST: OFF")mb("GH",270,30,72,22,"GHOST: OFF")mb("AD",347,30,38,22,"+SPD")mb("SU",390,30,38,22,"-SPD")
-mb("SA",5,55,110,22,"SELECT ALL")mb("PL",120,55,90,22,"PLAYER LIST")
-local rI=ins("TextBox")rI.Size=UDim2.new(0,35,0,22)rI.Position=UDim2.new(0,5,0,80)rI.BackgroundColor3=Th.B rI.TextColor3=Color3.new(1,1,1)rI.Font=Enum.Font.Code rI.TextSize=10 rI.PlaceholderText="R"rI.Text="30"rI.BorderSizePixel=0 rI.Parent=MF ins("UICorner",rI).CornerRadius=UDim.new(0,3)
-local gI=ins("TextBox")gI.Size=UDim2.new(0,35,0,22)gI.Position=UDim2.new(0,45,0,80)gI.BackgroundColor3=Th.B gI.TextColor3=Color3.new(1,1,1)gI.Font=Enum.Font.Code gI.TextSize=10 gI.PlaceholderText="G"gI.Text="30"gI.BorderSizePixel=0 gI.Parent=MF ins("UICorner",gI).CornerRadius=UDim.new(0,3)
-local bI=ins("TextBox")bI.Size=UDim2.new(0,35,0,22)bI.Position=UDim2.new(0,85,0,80)bI.BackgroundColor3=Th.B bI.TextColor3=Color3.new(1,1,1)bI.Font=Enum.Font.Code bI.TextSize=10 bI.PlaceholderText="B"bI.Text="30"bI.BorderSizePixel=0 bI.Parent=MF ins("UICorner",bI).CornerRadius=UDim.new(0,3)
-mb("AT",125,80,105,22,"APPLY THEME")
-local PLF=ins("Frame")PLF.Size=UDim2.new(1,-10,0,150)PLF.Position=UDim2.new(0,5,0,105)PLF.BackgroundColor3=Color3.fromRGB(20,20,20)PLF.BorderSizePixel=0 PLF.Visible=false PLF.Parent=MF ins("UICorner",PLF).CornerRadius=UDim.new(0,3)
-local PSF=ins("ScrollingFrame")PSF.Size=UDim2.new(1,-10,1,-10)PSF.Position=UDim2.new(0,5,0,5)PSF.BackgroundTransparency=1 PSF.BorderSizePixel=0 PSF.ScrollBarThickness=3 PSF.ScrollBarImageColor3=Color3.fromRGB(100,100,100)PSF.CanvasSize=UDim2.new(0,0,0,0)PSF.Parent=PLF
-local eE,eS,eI=false,false,false
-local iv,nc,bt,gh=false,false,false,false
-local sd=16 local cn={}
-local tB,tr,dC={},{} local dC2,rC=nil,nil
-local SelT,PCB,AF={},{},{}
-getgenv().OldPos=nil getgenv().FPDH=workspace.FallenPartsDestroyHeight
-local function gC(p)if not LP.Team or not p.Team then return Color3.new(1,.9,0)end if LP.Team==p.Team then return Color3.new(0,1,.4)end return p.Team.TeamColor.Color end
-local function gS(c)local m=LP.Character if not m or not c then return nil end local mP,tP=m:FindFirstChild"HumanoidRootPart",c:FindFirstChild"HumanoidRootPart"if not mP or not tP then return nil end local d=math.floor((mP.Position-tP.Position).Magnitude)return d>0 and d or nil end
-local function gIv(p)local it={}if p.Character then for _,v in next,p.Character:GetChildren()do if v:IsA"Tool"then table.insert(it,v.Name)end end end if p.Backpack then for _,v in next,p.Backpack:GetChildren()do if v:IsA"Tool"then table.insert(it,v.Name)end end end if#it==0 then return nil end local s=table.concat(it,", ")return#s>50 and s:sub(1,50).."..."or s end
-local function gN(p)return p.DisplayName~=p.Name and p.DisplayName.." (@"..p.Name..")"or p.Name end
-local function cF(p)if p==LP or not p.Character then return end local c=p.Character if c:FindFirstChild"OD"then return end ins("BoolValue",c).Name="OD"local co=gC(p)for _,d in next,c:GetDescendants()do if d:IsA"BasePart"and d.Size.Magnitude>=.5 then local b=ins("BoxHandleAdornment")b.Name="OB"b.Adornee=d b.Size=d.Size+Vector3.new(.06,.06,.06)b.Color3=co b.Transparency=.45 b.AlwaysOnTop=true b.Parent=d end end local r=c:FindFirstChild"HumanoidRootPart"if r then local bb=ins("BillboardGui")bb.Name="OBB_"..p.UserId bb.Adornee=r bb.Size=UDim2.new(0,200,0,80)bb.StudsOffset=Vector3.new(0,4,0)bb.AlwaysOnTop=true bb.Parent=SG local function lb(n,tx,y,cl,sz)local t2=ins("TextLabel",bb)t2.Name=n t2.Size=UDim2.new(1,0,0,13)t2.Position=UDim2.new(0,0,0,y)t2.BackgroundTransparency=1 t2.Text=tx t2.TextColor3=cl t2.TextSize=sz t2.Font=Enum.Font.Code t2.TextXAlignment=Enum.TextXAlignment.Center t2.TextStrokeTransparency=.5 t2.TextStrokeColor3=Color3.new(0,0,0)t2.TextWrapped=true return t2 end lb("N",gN(p),0,co,11)lb("D","0 studs",14,Color3.new(.8,.8,.8),10)lb("H","100 HP",26,Color3.new(.4,1,.4),10)lb("I","",48,Color3.new(.7,.7,1),9).Visible=false end if not tr[p]then local s,t2=pcall(function()local t=Drawing.new("Line")t.Thickness=1 t.Transparency=.5 t.Color=co t.Visible=true return t end)if s and t2 then tr[p]=t2 end end end
-local function rF(c,p)if not c then return end if c:FindFirstChild"OD"then c.OD:Destroy()end for _,b in next,c:GetDescendants()do if b.Name=="OB"and b:IsA"BoxHandleAdornment"then b:Destroy()end end local b=SG:FindFirstChild("OBB_"..p.UserId)if b then b:Destroy()end end
-local function rA()for _,p in next,P:GetPlayers()do rF(p.Character,p)if tr[p]then pcall(function()tr[p]:Remove()end)tr[p]=nil end end dC={}end
-local function sRL()if rC then return end rC=R.RenderStepped:Connect(function()if not eE then if rC then rC:Disconnect()rC=nil end return end local mC,mR,mS=LP.Character,nil,nil if mC then mR=mC:FindFirstChild"HumanoidRootPart"if mR then local s,p=pcall(function()return C:WorldToViewportPoint(mR.Position)end)if s then mS=p end end end for _,p in next,P:GetPlayers()do if p~=LP and p.Character and p.Character:FindFirstChild"OD"then local co,ch=gC(p),p.Character for _,b in next,ch:GetDescendants()do if b:IsA"BoxHandleAdornment"and b.Name=="OB"then b.Color3=co end end local bb=SG:FindFirstChild("OBB_"..p.UserId)if bb then local nL,dL,hL,iL=bb:FindFirstChild"N",bb:FindFirstChild"D",bb:FindFirstChild"H",bb:FindFirstChild"I"if nL then nL.Text,nL.TextColor3=gN(p),co end local d=gS(ch)if d and d>0 then dC[p]=d end if dL then dL.Text=(dC[p]or 0).." studs"end if hL then local h=ch:FindFirstChildOfClass"Humanoid"if h then local hp=math.floor(h.Health)hL.Text=hp.." HP"hL.TextColor3=hp>60 and Color3.new(.4,1,.4)or(hp>30 and Color3.new(1,.8,.3)or Color3.new(1,.3,.3))end end if iL then if eI then local iS=gIv(p)iL.Text,iL.Visible=iS or"",iS~=nil else iL.Visible=false end end end if tr[p]and mS then local tR=ch:FindFirstChild"HumanoidRootPart"if tR then local s,tS=pcall(function()return C:WorldToViewportPoint(tR.Position)end)if s and tS.Z>0 then tr[p].From,tr[p].To,tr[p].Color,tr[p].Visible=Vector2.new(mS.X,mS.Y),Vector2.new(tS.X,tS.Y),co,true else tr[p].Visible=false end else tr[p].Visible=false end elseif tr[p]then tr[p].Visible=false end end end end)end
-local function stOn()eS=true tB={}local function a(o)if o:IsA"BasePart"and o.Transparency<.5 then tB[o]=o.Transparency o.Transparency=.5 end end for _,o in next,workspace:GetDescendants()do a(o)end if dC2 then dC2:Disconnect()end dC2=workspace.DescendantAdded:Connect(function(o)if eS then task.wait()a(o)end end)end
-local function stOff()eS=false if dC2 then dC2:Disconnect()dC2=nil end for o,og in next,tB do if o and o.Parent then pcall(function()o.Transparency=og end)end end tB={}end
+--== ORGINS PANELS [1/2] ==--
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ORGINS_Combined_GUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.DisplayOrder = 999
+ScreenGui.Parent = CoreGui
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 750, 0, 120)
+MainFrame.Position = UDim2.new(0.5, -375, 0, 10)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Parent = ScreenGui
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 4)
+
+local TopBar = Instance.new("Frame")
+TopBar.Size = UDim2.new(1, 0, 0, 25)
+TopBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+TopBar.BorderSizePixel = 0
+TopBar.Parent = MainFrame
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(0, 150, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "ORGINS COMBINED"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.Code
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TopBar
+
+local MinimizeButton = Instance.new("TextButton")
+MinimizeButton.Size = UDim2.new(0, 20, 0, 15)
+MinimizeButton.Position = UDim2.new(1, -50, 0, 5)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizeButton.Font = Enum.Font.Code
+MinimizeButton.TextSize = 14
+MinimizeButton.Text = "–"
+MinimizeButton.BorderSizePixel = 0
+MinimizeButton.Parent = TopBar
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 20, 0, 15)
+CloseButton.Position = UDim2.new(1, -25, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.Code
+CloseButton.TextSize = 14
+CloseButton.Text = "X"
+CloseButton.BorderSizePixel = 0
+CloseButton.Parent = TopBar
+
+local PanelContainer = Instance.new("Frame")
+PanelContainer.Size = UDim2.new(1, -10, 1, -35)
+PanelContainer.Position = UDim2.new(0, 5, 0, 30)
+PanelContainer.BackgroundTransparency = 1
+PanelContainer.ClipsDescendants = true
+PanelContainer.Parent = MainFrame
+
+local Panel1 = Instance.new("Frame")
+Panel1.Size = UDim2.new(0.333, -5, 1, 0)
+Panel1.Position = UDim2.new(0, 0, 0, 0)
+Panel1.BackgroundTransparency = 1
+Panel1.Parent = PanelContainer
+
+local Panel2 = Instance.new("Frame")
+Panel2.Size = UDim2.new(0.333, -5, 1, 0)
+Panel2.Position = UDim2.new(0.333, 5, 0, 0)
+Panel2.BackgroundTransparency = 1
+Panel2.Parent = PanelContainer
+
+local Panel3 = Instance.new("Frame")
+Panel3.Size = UDim2.new(0.333, -5, 1, 0)
+Panel3.Position = UDim2.new(0.666, 10, 0, 0)
+Panel3.BackgroundTransparency = 1
+Panel3.Parent = PanelContainer
+
+-- ESP SYSTEM
+local espEnabled = false
+local seeThroughEnabled = false
+local invCheckEnabled = false
+local transparencyBackup = {}
+local descendantConn = nil
+local renderConn = nil
+local tracers = {}
+local distCache = {}
+
+local function getTeamColor(player)
+    local myTeam = LocalPlayer.Team
+    local theirTeam = player.Team
+    if not theirTeam or not myTeam then return Color3.fromRGB(255, 230, 0) end
+    if myTeam == theirTeam then return Color3.fromRGB(0, 255, 100) end
+    if theirTeam.TeamColor then return theirTeam.TeamColor.Color end
+    return Color3.fromRGB(255, 60, 60)
+end
+
+local function getStuds(character)
+    local myChar = LocalPlayer.Character
+    if not myChar or not character then return nil end
+    local myPos = myChar:FindFirstChild("HumanoidRootPart")
+    if not myPos or not myPos:IsA("BasePart") then
+        local s, p = pcall(function() return myChar:GetPivot().Position end)
+        if not s or not p or p.Magnitude < 1 then return nil end
+        myPos = {Position = p}
+    end
+    local theirPos = character:FindFirstChild("HumanoidRootPart")
+    if not theirPos or not theirPos:IsA("BasePart") then
+        local s, p = pcall(function() return character:GetPivot().Position end)
+        if not s or not p or p.Magnitude < 1 then return nil end
+        theirPos = {Position = p}
+    end
+    local dist = math.floor((myPos.Position - theirPos.Position).Magnitude)
+    if dist == 0 then return nil end
+    return dist
+end
+
+local function getInventoryString(player)
+    local items = {}
+    if player.Character then
+        for _, item in ipairs(player.Character:GetChildren()) do
+            if item:IsA("Tool") then table.insert(items, item.Name) end
+        end
+    end
+    if player.Backpack then
+        for _, item in ipairs(player.Backpack:GetChildren()) do
+            if item:IsA("Tool") then table.insert(items, item.Name) end
+        end
+    end
+    if #items == 0 then return nil end
+    local str = table.concat(items, ", ")
+    if #str > 50 then str = string.sub(str, 1, 50) .. "..." end
+    return str
+end
+
+local function createForPlayer(player)
+    if player == LocalPlayer then return end
+    local char = player.Character
+    if not char then return end
+    if char:FindFirstChild("OESP_Done") then return end
+    local marker = Instance.new("BoolValue")
+    marker.Name = "OESP_Done"
+    marker.Parent = char
+    local color = getTeamColor(player)
+    for _, desc in ipairs(char:GetDescendants()) do
+        if desc:IsA("BasePart") and desc.Size.Magnitude >= 0.5 then
+            local box = Instance.new("BoxHandleAdornment")
+            box.Name = "OESP_Box"
+            box.Adornee = desc
+            box.Size = desc.Size + Vector3.new(0.06, 0.06, 0.06)
+            box.Color3 = color
+            box.Transparency = 0.45
+            box.AlwaysOnTop = true
+            box.ZIndex = 10
+            box.Visible = true
+            box.Parent = desc
+        end
+    end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        local bb = Instance.new("BillboardGui")
+        bb.Name = "OESP_BB_" .. player.UserId
+        bb.Adornee = root
+        bb.Size = UDim2.new(0, 200, 0, 80)
+        bb.StudsOffset = Vector3.new(0, 4, 0)
+        bb.AlwaysOnTop = true
+        bb.Parent = ScreenGui
+        local function lbl(name, text, y, col, sz)
+            local t = Instance.new("TextLabel", bb)
+            t.Name = name
+            t.Size = UDim2.new(1, 0, 0, 13)
+            t.Position = UDim2.new(0, 0, 0, y)
+            t.BackgroundTransparency = 1
+            t.Text = text
+            t.TextColor3 = col
+            t.TextSize = sz
+            t.Font = Enum.Font.Code
+            t.TextXAlignment = Enum.TextXAlignment.Center
+            t.TextStrokeTransparency = 0.5
+            t.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+            t.TextWrapped = true
+            return t
+        end
+        local displayName = player.DisplayName
+        local username = player.Name
+        local nameText = displayName ~= username and (displayName .. " (@" .. username .. ")") or displayName
+        lbl("Name", nameText, 0, color, 11)
+        lbl("Dist", "0 studs", 14, Color3.fromRGB(200, 200, 200), 10)
+        lbl("Health", "100 HP", 26, Color3.fromRGB(100, 255, 100), 10)
+        local teamL = lbl("Team", player.Team and player.Team.Name or "", 38, color, 10)
+        teamL.Visible = (player.Team ~= nil)
+        lbl("Inv", "", 50, Color3.fromRGB(180, 180, 255), 9).Visible = false
+    end
+    if not tracers[player] then
+        local success, tracer = pcall(function()
+            local t = Drawing.new("Line")
+            t.Thickness = 1
+            t.Transparency = 0.5
+            t.Color = color
+            t.Visible = true
+            return t
+        end)
+        if success and tracer then tracers[player] = tracer end
+    end
+end
+
+local function removeForCharacter(char, player)
+    if not char then return end
+    local marker = char:FindFirstChild("OESP_Done")
+    if marker then marker:Destroy() end
+    for _, box in ipairs(char:GetDescendants()) do
+        if box.Name == "OESP_Box" and box:IsA("BoxHandleAdornment") then box:Destroy() end
+    end
+    local bb = ScreenGui:FindFirstChild("OESP_BB_" .. player.UserId)
+    if bb then bb:Destroy() end
+end
+
+local function removeAllESP()
+    for _, player in ipairs(Players:GetPlayers()) do
+        removeForCharacter(player.Character, player)
+        if tracers[player] then pcall(function() tracers[player]:Remove() end) tracers[player] = nil end
+    end
+    distCache = {}
+end
+
+local function startRenderLoop()
+    if renderConn then return end
+    renderConn = RunService.RenderStepped:Connect(function()
+        if not espEnabled then
+            if renderConn then renderConn:Disconnect() renderConn = nil end
+            return
+        end
+        local myChar = LocalPlayer.Character
+        local myRoot = myChar and (myChar:FindFirstChild("HumanoidRootPart") or myChar:FindFirstChild("Torso"))
+        local myScreenPos = nil
+        if myRoot then
+            local s, p = pcall(function() return Camera:WorldToViewportPoint(myRoot.Position) end)
+            if s then myScreenPos = p end
+        end
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("OESP_Done") then
+                local color = getTeamColor(player)
+                local char = player.Character
+                for _, box in ipairs(char:GetDescendants()) do
+                    if box:IsA("BoxHandleAdornment") and box.Name == "OESP_Box" then box.Color3 = color end
+                end
+                local bb = ScreenGui:FindFirstChild("OESP_BB_" .. player.UserId)
+                if bb then
+                    local root = char:FindFirstChild("HumanoidRootPart")
+                    if root then bb.Adornee = root end
+                    local nameL = bb:FindFirstChild("Name")
+                    local distL = bb:FindFirstChild("Dist")
+                    local healthL = bb:FindFirstChild("Health")
+                    local teamL = bb:FindFirstChild("Team")
+                    local invL = bb:FindFirstChild("Inv")
+                    if nameL then 
+                        nameL.Text = player.DisplayName ~= player.Name and (player.DisplayName .. " (@" .. player.Name .. ")") or player.DisplayName
+                        nameL.TextColor3 = color 
+                    end
+                    local dist = getStuds(char)
+                    if dist and dist > 0 then distCache[player] = dist end
+                    if distL then distL.Text = (distCache[player] or 0) .. " studs" end
+                    if healthL then
+                        local hum = char:FindFirstChildOfClass("Humanoid")
+                        if hum then
+                            local hp = math.floor(hum.Health)
+                            healthL.Text = hp .. " HP"
+                            if hp > 60 then healthL.TextColor3 = Color3.fromRGB(100, 255, 100)
+                            elseif hp > 30 then healthL.TextColor3 = Color3.fromRGB(255, 200, 80)
+                            else healthL.TextColor3 = Color3.fromRGB(255, 80, 80) end
+                        end
+                    end
+                    if teamL then
+                        if player.Team then teamL.Text = player.Team.Name; teamL.TextColor3 = color; teamL.Visible = true
+                        else teamL.Visible = false end
+                    end
+                    if invL then
+                        if invCheckEnabled then
+                            local invStr = getInventoryString(player)
+                            if invStr then invL.Text = invStr; invL.Visible = true else invL.Visible = false end
+                        else invL.Visible = false end
+                    end
+                end
+                if tracers[player] and myScreenPos then
+                    local theirRoot = char:FindFirstChild("HumanoidRootPart") or char:FindFirstChild("Torso")
+                    if theirRoot then
+                        local s, theirScreenPos = pcall(function() return Camera:WorldToViewportPoint(theirRoot.Position) end)
+                        if s and theirScreenPos.Z > 0 then
+                            tracers[player].From = Vector2.new(myScreenPos.X, myScreenPos.Y)
+                            tracers[player].To = Vector2.new(theirScreenPos.X, theirScreenPos.Y)
+                            tracers[player].Color = color
+                            tracers[player].Visible = true
+                        else tracers[player].Visible = false end
+                    else tracers[player].Visible = false end
+                elseif tracers[player] then tracers[player].Visible = false end
+            end
+        end
+    end)
+end
+
+local function enableESP()
+    espEnabled = true
+    for _, player in ipairs(Players:GetPlayers()) do createForPlayer(player) end
+    startRenderLoop()
+end
+local function disableESP()
+    espEnabled = false
+    if renderConn then renderConn:Disconnect() renderConn = nil end
+    removeAllESP()
+end
+
+local function seeThroughOn()
+    seeThroughEnabled = true
+    transparencyBackup = {}
+    local function apply(obj)
+        if (obj:IsA("BasePart") or obj:IsA("Decal") or obj:IsA("Texture")) then
+            if obj.Transparency < 0.5 then transparencyBackup[obj] = obj.Transparency; obj.Transparency = 0.5 end
+        end
+    end
+    for _, obj in ipairs(workspace:GetDescendants()) do apply(obj) end
+    if descendantConn then descendantConn:Disconnect() end
+    descendantConn = workspace.DescendantAdded:Connect(function(obj)
+        if not seeThroughEnabled then return end
+        task.wait()
+        apply(obj)
+    end)
+end
+local function seeThroughOff()
+    seeThroughEnabled = false
+    if descendantConn then descendantConn:Disconnect() descendantConn = nil end
+    for obj, orig in pairs(transparencyBackup) do
+        if obj and obj.Parent then pcall(function() obj.Transparency = orig end) end
+    end
+    transparencyBackup = {}
+end
 --== END PART 1 ==--
---== ORGINS COMBINED [2/2] ==--
-local seatPos=Vector3.new(-25.95,400,3537.55)
-local sa_on=false
-local function uS()local h=LP.Character and LP.Character:FindFirstChildOfClass"Humanoid"if h then h.WalkSpeed=gh and iv and 40 or bt and 32 or sd end end
-local function tI()iv=not iv B.IV.Text="INVIS: "..(iv and"ON"or"OFF")B.IV.BackgroundColor3=iv and Th.A or Th.B local ch=LP.Character if not ch or not ch:FindFirstChild"HumanoidRootPart"then return end local hr=ch.HumanoidRootPart if iv then for _,v in next,ch:GetDescendants()do if v:IsA"BasePart"and v.Name~="HumanoidRootPart"then v.Transparency=.75 end end local sv=hr.CFrame local s2=hr.Position+Vector3.new(0,500,0)ch:MoveTo(s2)task.wait()if not ch:FindFirstChild"HumanoidRootPart"or ch.HumanoidRootPart.Position.Y<-50 then ch:MoveTo(sv.Position)iv=false B.IV.Text="INVIS: OFF"B.IV.BackgroundColor3=Th.B for _,v in next,ch:GetDescendants()do if v:IsA"BasePart"then v.Transparency=0 end end return end local s=ins("Seat")s.Parent=workspace s.Anchored=false s.CanCollide=false s.Transparency=1 s.Position=s2 s.Name="ic"local w=ins("Weld")w.Part0=s w.Parent=s local t=ch:FindFirstChild"Torso"or ch:FindFirstChild"UpperTorso"if t then w.Part1=t task.wait()s.CFrame=sv end else for _,v in next,ch:GetDescendants()do if v:IsA"BasePart"then v.Transparency=0 pcall(function()v.CanCollide=true end)pcall(function()v.CanQuery=true end)pcall(function()v.Massless=false end)end end if workspace:FindFirstChild"ic"then workspace.ic:Destroy()end if gh then gh=false B.GH.Text="GHOST: OFF"B.GH.BackgroundColor3=Th.B uS()end end end
-local function sF(tp)local ch=LP.Character if not ch then return end local h,r=ch:FindFirstChildOfClass"Humanoid",ch:FindFirstChild"HumanoidRootPart"local tc=tp.Character if not tc or not h or not r then return end local th,tP=tc:FindFirstChildOfClass"Humanoid",(tc:FindFirstChildOfClass"Humanoid"and tc:FindFirstChildOfClass"Humanoid".RootPart)or tc:FindFirstChild"Head"if not tP then return end if r.AssemblyLinearVelocity.Magnitude<50 then getgenv().OldPos=r.CFrame end h:SetStateEnabled(Enum.HumanoidStateType.Seated,false)if tc:FindFirstChild"Head"then workspace.CurrentCamera.CameraSubject=tc:FindFirstChild"Head"elseif th then workspace.CurrentCamera.CameraSubject=th end local st=tick()repeat if r and tP and tP.Parent then local f=tP.CFrame*CFrame.new(math.random(-10,10)/10,math.random(-10,10)/10,math.random(-10,10)/10)r.CFrame=f ch:PivotTo(f)r.AssemblyLinearVelocity=Vector3.new(9999,9999,9999)r.AssemblyAngularVelocity=Vector3.new(9999,9999,9999)task.wait()else break end until tick()-st>2 or not AF[tp.Name]h:SetStateEnabled(Enum.HumanoidStateType.Seated,true)workspace.CurrentCamera.CameraSubject=h r.AssemblyLinearVelocity=Vector3.zero r.AssemblyAngularVelocity=Vector3.zero if getgenv().OldPos then local rc=getgenv().OldPos*CFrame.new(0,5,0)r.CFrame=rc ch:PivotTo(rc)h:ChangeState(Enum.HumanoidStateType.GettingUp)end end
-local function sP(p)if AF[p.Name]then return end AF[p.Name]=true if PCB[p.Name]then PCB[p.Name].BackgroundColor3=Color3.fromRGB(180,0,0)PCB[p.Name].NameL.Text=p.Name.." [FLING]"PCB[p.Name].Ck.Text="✓"end task.spawn(function()while AF[p.Name]do sF(p)task.wait(.5)end end)end
-local function xP(n)AF[n]=false if PCB[n]then PCB[n].BackgroundColor3=Th.B PCB[n].NameL.Text=n PCB[n].Ck.Text=""end end
-local function rPL()for _,c in next,PSF:GetChildren()do c:Destroy()end PCB={}local pl=P:GetPlayers()table.sort(pl,function(a,b)return a.Name:lower()<b.Name:lower()end)local y=2 for _,p in next,pl do if p~=LP then local e=ins("Frame")e.Size=UDim2.new(1,-8,0,20)e.Position=UDim2.new(0,4,0,y)e.BackgroundColor3=AF[p.Name]and Color3.fromRGB(180,0,0)or Th.B e.BorderSizePixel=0 e.Parent=PSF ins("UICorner",e).CornerRadius=UDim.new(0,2)local ck=ins("TextLabel")ck.Size=UDim2.new(0,16,1,0)ck.Position=UDim2.new(0,2,0,0)ck.BackgroundTransparency=1 ck.Text=AF[p.Name]and"✓"or"" ck.TextColor3=Color3.new(0,1,0)ck.TextSize=12 ck.Font=Enum.Font.Code ck.Parent=e local nl=ins("TextLabel")nl.Size=UDim2.new(1,-25,1,0)nl.Position=UDim2.new(0,20,0,0)nl.BackgroundTransparency=1 nl.Text=AF[p.Name]and(p.Name.." [FLING]")or p.Name nl.TextColor3=Color3.new(1,1,1)nl.TextSize=10 nl.Font=Enum.Font.Code nl.TextXAlignment=Enum.TextXAlignment.Left nl.Parent=e local ca=ins("TextButton")ca.Size=UDim2.new(1,0,1,0)ca.BackgroundTransparency=1 ca.Text="" ca.ZIndex=2 ca.Parent=e ca.MouseButton1Click:Connect(function()if AF[p.Name]then xP(p.Name)else sP(p)end rPL()end)PCB[p.Name]={BackgroundColor3=e.BackgroundColor3, NameL=nl, Ck=ck, Frame=e} y=y+23 end end PSF.CanvasSize=UDim2.new(0,0,0,y+2)end
-local function aTh()local r2,g2,b2=tonumber(rI.Text)or 0,tonumber(gI.Text)or 0,tonumber(bI.Text)or 0 r2,g2,b2=math.clamp(r2,0,255),math.clamp(g2,0,255),math.clamp(b2,0,255)Th.B=Color3.fromRGB(r2,g2,b2)Th.A=Color3.fromRGB(math.clamp(r2*1.2,0,255),math.clamp(g2*1.2,0,255),math.clamp(b2*1.2,0,255))for _,b in next,B do local on=b.Text:match("ON$")b.BackgroundColor3=on and Th.A or Th.B end rI.BackgroundColor3=Th.B gI.BackgroundColor3=Th.B bI.BackgroundColor3=Th.B PLF.BackgroundColor3=Color3.fromRGB(math.floor(r2*.6),math.floor(g2*.6),math.floor(b2*.6))for n,d in next,PCB do d.Frame.BackgroundColor3=AF[n]and Color3.fromRGB(180,0,0)or Th.B end end
-B.ESP.MouseButton1Click:Connect(function()eE=not eE B.ESP.Text="ESP: "..(eE and"ON"or"OFF")B.ESP.BackgroundColor3=eE and Th.A or Th.B if eE then for _,p in next,P:GetPlayers()do cF(p)end sRL()else rA()end end)
-B.ST.MouseButton1Click:Connect(function()eS=not eS B.ST.Text="SEE-THRU: "..(eS and"ON"or"OFF")B.ST.BackgroundColor3=eS and Th.A or Th.B if eS then stOn()else stOff()end end)
-B.IC.MouseButton1Click:Connect(function()eI=not eI B.IC.Text="INV: "..(eI and"ON"or"OFF")B.IC.BackgroundColor3=eI and Th.A or Th.B end)
-B.IV.MouseButton1Click:Connect(tI)
-B.NC.MouseButton1Click:Connect(function()nc=not nc B.NC.Text="NOCLIP: "..(nc and"ON"or"OFF")B.NC.BackgroundColor3=nc and Th.A or Th.B end)
-B.BT.MouseButton1Click:Connect(function()bt=not bt B.BT.Text="BOOST: "..(bt and"ON"or"OFF")B.BT.BackgroundColor3=bt and Th.A or Th.B uS()end)
-B.GH.MouseButton1Click:Connect(function()gh=not gh B.GH.Text="GHOST: "..(gh and"ON"or"OFF")B.GH.BackgroundColor3=gh and Th.A or Th.B uS()end)
-B.AD.MouseButton1Click:Connect(function()sd=math.clamp(sd+5,1,200)uS()end)
-B.SU.MouseButton1Click:Connect(function()sd=math.clamp(sd-5,1,200)uS()end)
-B.SA.MouseButton1Click:Connect(function()sa_on=not sa_on B.SA.Text=sa_on and"DESELECT ALL"or"SELECT ALL"B.SA.BackgroundColor3=sa_on and Color3.fromRGB(180,0,0)or Th.B for _,p in next,P:GetPlayers()do if p~=LP then if sa_on then sP(p)else xP(p.Name)end end end rPL()end)
-B.PL.MouseButton1Click:Connect(function()PLF.Visible=not PLF.Visible MF.Size=PLF.Visible and UDim2.new(0,520,0,260)or UDim2.new(0,520,0,110)end)
-B.AT.MouseButton1Click:Connect(aTh)
-Mn.Activated:Connect(function()PLF.Visible=false MF.Size=UDim2.new(0,520,0,110)end)
-Ex.Activated:Connect(function()if eE then eE=false rA()end if eS then stOff()end if iv then tI()end for n,_ in next,AF do AF[n]=false end SG:Destroy()end)
-table.insert(cn,R.Heartbeat:Connect(function()local ch=LP.Character if ch then if nc or iv then for _,v in next,ch:GetDescendants()do if v:IsA"BasePart"then pcall(function()v.CanCollide=false end)if iv then pcall(function()v.CanQuery=false end)pcall(function()v.Massless=true end)end end end end if iv then local h=ch:FindFirstChildOfClass"Humanoid"if h then h.Health=h.MaxHealth end end end end))
-P.PlayerAdded:Connect(function(p)p.CharacterAdded:Connect(function(c)task.wait(1.2)if eE then cF(p)end end)task.wait(1)if eE then cF(p)end rPL()end)
-P.PlayerRemoving:Connect(function(p)rF(p.Character,p)if tr[p]then pcall(function()tr[p]:Remove()end)tr[p]=nil end SelT[p.Name]=nil AF[p.Name]=nil rPL()end)
-for _,p in next,P:GetPlayers()do if p~=LP then p.CharacterAdded:Connect(function(c)task.wait(1.2)if eE then cF(p)end end)if p.Character and eE then task.wait(.5)cF(p)end end end
-table.insert(cn,U.InputBegan:Connect(function(q,g)if g then return end if q.KeyCode==Enum.KeyCode.Z then tI()elseif q.KeyCode==Enum.KeyCode.N then B.NC.Activated:Fire()elseif q.KeyCode==Enum.KeyCode.B then B.BT.Activated:Fire()elseif q.KeyCode==Enum.KeyCode.G then B.GH.Activated:Fire()end end))
-rPL()
-game:GetService"StarterGui":SetCore("SendNotification",{Title="ORGINS",Text="Loaded! Click players in list to fling.",Duration=3})
+--== ORGINS PANELS [2/2] ==--
+local invis_on = false
+local noclip_on = false
+local boost_on = false
+local base_speed = 16
+local seatPos = Vector3.new(-25.95, 400, 3537.55)
+local connections = {}
+
+local function updateSpeed()
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if not h then return end
+    if invis_on then h.WalkSpeed = 40
+    elseif boost_on then h.WalkSpeed = 32
+    else h.WalkSpeed = base_speed end
+end
+
+local function toggleInvis()
+    invis_on = not invis_on
+    local char = LocalPlayer.Character
+    if not char then return end
+    if invis_on then
+        for _,v in pairs(char:GetDescendants()) do 
+            if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then v.Transparency = 0.75 end 
+        end
+        local hr = char:FindFirstChild("HumanoidRootPart")
+        if not hr then return end
+        local saved = hr.CFrame
+        char:MoveTo(seatPos)
+        task.wait()
+        if not char:FindFirstChild("HumanoidRootPart") or char.HumanoidRootPart.Position.Y < -50 then
+            char:MoveTo(saved)
+            invis_on = false
+            for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 end end
+            return
+        end
+        local seat = Instance.new("Seat")
+        seat.Parent = workspace
+        seat.Anchored = false
+        seat.CanCollide = false
+        seat.Transparency = 1
+        seat.Position = seatPos
+        seat.Name = "invischair"
+        local weld = Instance.new("Weld")
+        weld.Part0 = seat
+        weld.Parent = seat
+        local torso = char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso")
+        if torso then weld.Part1 = torso; task.wait(); seat.CFrame = saved end
+    else
+        for _,v in pairs(char:GetDescendants()) do if v:IsA("BasePart") then v.Transparency = 0 end end
+        if workspace:FindFirstChild("invischair") then workspace.invischair:Destroy() end
+    end
+end
+
+local SelectedTargets = {}
+local PlayerCheckboxes = {}
+local FlingActive = false
+getgenv().OldPos = nil
+getgenv().FPDH = workspace.FallenPartsDestroyHeight
+
+local function SkidFling(TargetPlayer)
+    local Character = LocalPlayer.Character
+    local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+    local RootPart = Humanoid and Humanoid.RootPart
+    local TCharacter = TargetPlayer.Character
+    if not TCharacter then return end
+    local THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+    local TRootPart = THumanoid and THumanoid.RootPart
+    local THead = TCharacter:FindFirstChild("Head")
+    local Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+    local Handle = Accessory and Accessory:FindFirstChild("Handle")
+    if Character and Humanoid and RootPart then
+        if RootPart.Velocity.Magnitude < 50 then getgenv().OldPos = RootPart.CFrame end
+        if THumanoid and THumanoid.Sit then return end
+        if THead then workspace.CurrentCamera.CameraSubject = THead
+        elseif Handle then workspace.CurrentCamera.CameraSubject = Handle
+        elseif THumanoid then workspace.CurrentCamera.CameraSubject = THumanoid end
+        if not TCharacter:FindFirstChildWhichIsA("BasePart") then return end
+        local FPos = function(BasePart, Pos, Ang)
+            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+            Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+        end
+        local SFBasePart = function(BasePart)
+            local TimeToWait = 2
+            local Time = tick()
+            local Angle = 0
+            repeat
+                if RootPart and THumanoid then
+                    if BasePart.Velocity.Magnitude < 50 then
+                        Angle = Angle + 100
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+                    else
+                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                    end
+                end
+            until Time + TimeToWait < tick() or not FlingActive
+        end
+        workspace.FallenPartsDestroyHeight = 0/0
+        local BV = Instance.new("BodyVelocity")
+        BV.Parent = RootPart
+        BV.Velocity = Vector3.new(0, 0, 0)
+        BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        if TRootPart then SFBasePart(TRootPart)
+        elseif THead then SFBasePart(THead)
+        elseif Handle then SFBasePart(Handle) end
+        BV:Destroy()
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+        workspace.CurrentCamera.CameraSubject = Humanoid
+        if getgenv().OldPos then
+            repeat
+                RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
+                Character:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
+                Humanoid:ChangeState("GettingUp")
+                for _, part in pairs(Character:GetChildren()) do
+                    if part:IsA("BasePart") then part.Velocity, part.RotVelocity = Vector3.new(), Vector3.new() end
+                end
+                task.wait()
+            until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
+            workspace.FallenPartsDestroyHeight = getgenv().FPDH
+        end
+    end
+end
+
+local function StartFling()
+    if FlingActive then return end
+    local count = 0
+    for _ in pairs(SelectedTargets) do count = count + 1 end
+    if count == 0 then return end
+    FlingActive = true
+    spawn(function()
+        while FlingActive do
+            local validTargets = {}
+            for name, player in pairs(SelectedTargets) do
+                if player and player.Parent then validTargets[name] = player
+                else SelectedTargets[name] = nil end
+            end
+            for _, player in pairs(validTargets) do
+                if FlingActive then SkidFling(player); wait(0.1) else break end
+            end
+            wait(0.5)
+        end
+    end)
+end
+local function StopFling() FlingActive = false end
+
+-- GUI BUTTONS
+local function makeBtn(parent, text, x, y, w, h, color)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, w, 0, h)
+    btn.Position = UDim2.new(0, x, 0, y)
+    btn.BackgroundColor3 = color or Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.Code
+    btn.TextSize = 10
+    btn.Text = text
+    btn.BorderSizePixel = 0
+    btn.Parent = parent
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 3)
+    return btn
+end
+
+local ESPButton = makeBtn(Panel1, "ESP: OFF", 5, 5, 90, 25)
+local SeeThruButton = makeBtn(Panel1, "SEE-THRU: OFF", 100, 5, 110, 25)
+local InvCheckButton = makeBtn(Panel1, "INV: OFF", 5, 35, 90, 25)
+
+local InvisButton = makeBtn(Panel2, "INVIS: OFF", 5, 5, 90, 25)
+local NoclipButton = makeBtn(Panel2, "NOCLIP: OFF", 100, 5, 100, 25)
+local BoostButton = makeBtn(Panel2, "BOOST: OFF", 5, 35, 90, 25)
+
+local SelectAllButton = makeBtn(Panel3, "SELECT ALL", 5, 5, 90, 25)
+local DeselectAllButton = makeBtn(Panel3, "DESELECT ALL", 100, 5, 100, 25)
+local StartFlingButton = makeBtn(Panel3, "START FLING", 5, 35, 90, 25, Color3.fromRGB(0, 160, 0))
+local StopFlingButton = makeBtn(Panel3, "STOP FLING", 100, 35, 100, 25, Color3.fromRGB(160, 0, 0))
+
+local SelectionFrame = Instance.new("Frame")
+SelectionFrame.Size = UDim2.new(0, 195, 1, -10)
+SelectionFrame.Position = UDim2.new(1, -195, 0, 0)
+SelectionFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+SelectionFrame.BorderSizePixel = 0
+SelectionFrame.Parent = Panel3
+Instance.new("UICorner", SelectionFrame).CornerRadius = UDim.new(0, 3)
+
+local PlayerScrollFrame = Instance.new("ScrollingFrame")
+PlayerScrollFrame.Size = UDim2.new(1, -10, 1, -10)
+PlayerScrollFrame.Position = UDim2.new(0, 5, 0, 5)
+PlayerScrollFrame.BackgroundTransparency = 1
+PlayerScrollFrame.BorderSizePixel = 0
+PlayerScrollFrame.ScrollBarThickness = 4
+PlayerScrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerScrollFrame.Parent = SelectionFrame
+
+local function RefreshPlayerList()
+    for _, child in pairs(PlayerScrollFrame:GetChildren()) do child:Destroy() end
+    PlayerCheckboxes = {}
+    local PlayerList = Players:GetPlayers()
+    table.sort(PlayerList, function(a, b) return a.Name:lower() < b.Name:lower() end)
+    local yPosition = 2
+    for _, player in ipairs(PlayerList) do
+        if player ~= LocalPlayer then
+            local PlayerEntry = Instance.new("Frame")
+            PlayerEntry.Size = UDim2.new(1, -8, 0, 20)
+            PlayerEntry.Position = UDim2.new(0, 4, 0, yPosition)
+            PlayerEntry.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            PlayerEntry.BorderSizePixel = 0
+            PlayerEntry.Parent = PlayerScrollFrame
+            Instance.new("UICorner", PlayerEntry).CornerRadius = UDim.new(0, 2)
+            local Checkbox = Instance.new("TextButton")
+            Checkbox.Size = UDim2.new(0, 16, 0, 16)
+            Checkbox.Position = UDim2.new(0, 2, 0.5, -8)
+            Checkbox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            Checkbox.BorderSizePixel = 0
+            Checkbox.Text = ""
+            Checkbox.Parent = PlayerEntry
+            local Checkmark = Instance.new("TextLabel")
+            Checkmark.Size = UDim2.new(1, 0, 1, 0)
+            Checkmark.BackgroundTransparency = 1
+            Checkmark.Text = "✓"
+            Checkmark.TextColor3 = Color3.fromRGB(0, 255, 0)
+            Checkmark.TextSize = 13
+            Checkmark.Font = Enum.Font.Code
+            Checkmark.Visible = SelectedTargets[player.Name] ~= nil
+            Checkmark.Parent = Checkbox
+            local NameLabel = Instance.new("TextLabel")
+            NameLabel.Size = UDim2.new(1, -25, 1, 0)
+            NameLabel.Position = UDim2.new(0, 22, 0, 0)
+            NameLabel.BackgroundTransparency = 1
+            NameLabel.Text = player.Name
+            NameLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+            NameLabel.TextSize = 11
+            NameLabel.Font = Enum.Font.Code
+            NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            NameLabel.Parent = PlayerEntry
+            local ClickArea = Instance.new("TextButton")
+            ClickArea.Size = UDim2.new(1, 0, 1, 0)
+            ClickArea.BackgroundTransparency = 1
+            ClickArea.Text = ""
+            ClickArea.ZIndex = 2
+            ClickArea.Parent = PlayerEntry
+            ClickArea.MouseButton1Click:Connect(function()
+                if SelectedTargets[player.Name] then
+                    SelectedTargets[player.Name] = nil
+                    Checkmark.Visible = false
+                else
+                    SelectedTargets[player.Name] = player
+                    Checkmark.Visible = true
+                end
+            end)
+            PlayerCheckboxes[player.Name] = { Entry = PlayerEntry, Checkmark = Checkmark }
+            yPosition = yPosition + 23
+        end
+    end
+    PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, yPosition + 2)
+end
+
+local function ToggleAllPlayers(select)
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local cd = PlayerCheckboxes[player.Name]
+            if cd then
+                if select then SelectedTargets[player.Name] = player; cd.Checkmark.Visible = true
+                else SelectedTargets[player.Name] = nil; cd.Checkmark.Visible = false end
+            end
+        end
+    end
+end
+
+-- CONNECTIONS
+ESPButton.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    if espEnabled then enableESP() else disableESP() end
+    ESPButton.Text = "ESP: " .. (espEnabled and "ON" or "OFF")
+    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+end)
+SeeThruButton.MouseButton1Click:Connect(function()
+    seeThroughEnabled = not seeThroughEnabled
+    if seeThroughEnabled then seeThroughOn() else seeThroughOff() end
+    SeeThruButton.Text = "SEE-THRU: " .. (seeThroughEnabled and "ON" or "OFF")
+    SeeThruButton.BackgroundColor3 = seeThroughEnabled and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+end)
+InvCheckButton.MouseButton1Click:Connect(function()
+    invCheckEnabled = not invCheckEnabled
+    InvCheckButton.Text = "INV: " .. (invCheckEnabled and "ON" or "OFF")
+    InvCheckButton.BackgroundColor3 = invCheckEnabled and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+end)
+InvisButton.MouseButton1Click:Connect(function()
+    toggleInvis()
+    InvisButton.Text = "INVIS: " .. (invis_on and "ON" or "OFF")
+    InvisButton.BackgroundColor3 = invis_on and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+end)
+NoclipButton.MouseButton1Click:Connect(function()
+    noclip_on = not noclip_on
+    NoclipButton.Text = "NOCLIP: " .. (noclip_on and "ON" or "OFF")
+    NoclipButton.BackgroundColor3 = noclip_on and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+end)
+BoostButton.MouseButton1Click:Connect(function()
+    boost_on = not boost_on
+    BoostButton.Text = "BOOST: " .. (boost_on and "ON" or "OFF")
+    BoostButton.BackgroundColor3 = boost_on and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(40, 40, 40)
+    updateSpeed()
+end)
+SelectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(true) end)
+DeselectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(false) end)
+StartFlingButton.MouseButton1Click:Connect(StartFling)
+StopFlingButton.MouseButton1Click:Connect(StopFling)
+
+local isMinimized = false
+MinimizeButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    PanelContainer.Visible = not isMinimized
+    MainFrame.Size = isMinimized and UDim2.new(0, 750, 0, 25) or UDim2.new(0, 750, 0, 120)
+end)
+CloseButton.MouseButton1Click:Connect(function()
+    if espEnabled then disableESP() end
+    if seeThroughEnabled then seeThroughOff() end
+    if invis_on then toggleInvis() end
+    if FlingActive then StopFling() end
+    for _, c in ipairs(connections) do if c and typeof(c) == "RBXScriptConnection" then c:Disconnect() end end
+    ScreenGui:Destroy()
+end)
+
+local dragging, dragStart, startPos
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true; dragStart = input.Position; startPos = MainFrame.Position
+        input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+    end
+end)
+TopBar.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+table.insert(connections, RunService.Heartbeat:Connect(function()
+    local char = LocalPlayer.Character
+    if char then
+        if noclip_on or invis_on then
+            for _,v in pairs(char:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    pcall(function() v.CanCollide = false end)
+                    if invis_on then
+                        pcall(function() v.CanQuery = false end)
+                        pcall(function() v.Massless = true end)
+                    end
+                end
+            end
+        end
+        if invis_on then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Health < hum.MaxHealth then hum.Health = hum.MaxHealth end
+        end
+    end
+end))
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterRemoving:Connect(function(oldChar) removeForCharacter(oldChar, player) end)
+    player.CharacterAdded:Connect(function(char)
+        task.wait(1.2)
+        if espEnabled then createForPlayer(player) end
+    end)
+    task.wait(1)
+    if espEnabled then createForPlayer(player) end
+    RefreshPlayerList()
+end)
+Players.PlayerRemoving:Connect(function(player)
+    removeForCharacter(player.Character, player)
+    if tracers[player] then pcall(function() tracers[player]:Remove() end) tracers[player] = nil end
+    distCache[player] = nil
+    if SelectedTargets[player.Name] then SelectedTargets[player.Name] = nil end
+    RefreshPlayerList()
+end)
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        player.CharacterRemoving:Connect(function(oldChar) removeForCharacter(oldChar, player) end)
+        player.CharacterAdded:Connect(function(char)
+            task.wait(1.2)
+            if espEnabled then createForPlayer(player) end
+        end)
+        if player.Character and espEnabled then task.wait(0.5); createForPlayer(player) end
+    end
+end
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(2)
+    if espEnabled then disableESP(); enableESP() end
+    if not ScreenGui.Parent then ScreenGui.Parent = CoreGui end
+end)
+
+RefreshPlayerList()
+game:GetService("StarterGui"):SetCore("SendNotification", {Title="ORGINS", Text="Panel GUI Loaded!", Duration=3})
 --== END PART 2 ==--
