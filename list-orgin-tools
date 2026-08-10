@@ -1,4 +1,5 @@
 --== ORGINS PANELS [1/2] ==--
+local function Init()
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -38,6 +39,17 @@ Title.Font = Enum.Font.Code
 Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.Parent = TopBar
+
+local ResetGuiButton = Instance.new("TextButton")
+ResetGuiButton.Size = UDim2.new(0, 75, 0, 15)
+ResetGuiButton.Position = UDim2.new(1, -130, 0, 5)
+ResetGuiButton.BackgroundColor3 = Color3.fromRGB(0, 100, 180)
+ResetGuiButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ResetGuiButton.Font = Enum.Font.Code
+ResetGuiButton.TextSize = 11
+ResetGuiButton.Text = "RESET GUI"
+ResetGuiButton.BorderSizePixel = 0
+ResetGuiButton.Parent = TopBar
 
 local MinimizeButton = Instance.new("TextButton")
 MinimizeButton.Size = UDim2.new(0, 20, 0, 15)
@@ -86,7 +98,8 @@ Panel3.Position = UDim2.new(0.666, 10, 0, 0)
 Panel3.BackgroundTransparency = 1
 Panel3.Parent = PanelContainer
 
--- ESP SYSTEM
+-- SYSTEM VARIABLES
+local connections = {}
 local espEnabled = false
 local seeThroughEnabled = false
 local invCheckEnabled = false
@@ -345,12 +358,12 @@ local function seeThroughOff()
 end
 --== END PART 1 ==--
 --== ORGINS PANELS [2/2] ==--
+local isMinimized = false
 local invis_on = false
 local noclip_on = false
 local boost_on = false
 local base_speed = 16
 local seatPos = Vector3.new(-25.95, 400, 3537.55)
-local connections = {}
 
 local function updateSpeed()
     local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -620,6 +633,33 @@ local function ToggleAllPlayers(select)
 end
 
 -- CONNECTIONS
+ResetGuiButton.MouseButton1Click:Connect(function()
+    -- 1. Force turn everything OFF safely
+    if espEnabled then disableESP() end
+    if seeThroughEnabled then seeThroughOff() end
+    if invis_on then toggleInvis() end
+    noclip_on = false
+    boost_on = false
+    updateSpeed()
+    if FlingActive then StopFling() end
+    
+    -- 2. Disconnect all background loops to prevent duplicates/leaks
+    if renderConn then renderConn:Disconnect() end
+    if descendantConn then descendantConn:Disconnect() end
+    for _, c in ipairs(connections) do 
+        if c and typeof(c) == "RBXScriptConnection" then c:Disconnect() end 
+    end
+    
+    -- 3. Destroy the GUI completely
+    if ScreenGui and ScreenGui.Parent then
+        ScreenGui:Destroy()
+    end
+    
+    -- 4. Relaunch
+    task.wait(0.1)
+    Init()
+end)
+
 ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
     if espEnabled then enableESP() else disableESP() end
@@ -658,7 +698,6 @@ DeselectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(false) e
 StartFlingButton.MouseButton1Click:Connect(StartFling)
 StopFlingButton.MouseButton1Click:Connect(StopFling)
 
-local isMinimized = false
 MinimizeButton.MouseButton1Click:Connect(function()
     isMinimized = not isMinimized
     PanelContainer.Visible = not isMinimized
@@ -743,4 +782,6 @@ end)
 
 RefreshPlayerList()
 game:GetService("StarterGui"):SetCore("SendNotification", {Title="ORGINS", Text="Panel GUI Loaded!", Duration=3})
+end -- End of Init function
+Init() -- Start the script
 --== END PART 2 ==--
